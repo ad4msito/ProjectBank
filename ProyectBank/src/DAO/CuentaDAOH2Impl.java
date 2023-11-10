@@ -1,11 +1,10 @@
 package DAO;
 
+import com.sun.org.apache.xpath.internal.operations.String;
 import controlador.Cuenta;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +25,7 @@ public class CuentaDAOH2Impl implements CuentaDAO{
     }
 
     public void insertar(Cuenta c) throws DAOException{
+        String accountID = c.getAccountID();
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
         long user = c.getUserID();
@@ -35,17 +35,17 @@ public class CuentaDAOH2Impl implements CuentaDAO{
         try {
             PreparedStatement preparedStatement=null;
             Statement s = conn.createStatement();
-            String sql = "INSERT INTO CUENTAS(ACCOUNTTYPE, SALDO, U) VALUES('" + accountType +  "', '" + saldo + "', '"+ user + "')";
+            java.lang.String sql = "INSERT INTO CUENTAS(ACCOUNTID, ACCOUNTTYPE, SALDO, U) VALUES('" + accountID +  "', '" + accountType +  "', '" + saldo + "', '"+ user + "')";
             s.executeUpdate(sql);
             conn.commit();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
            try {
                conn.rollback();
-               if(e.getErrorCode() == 23505){
-                   throw new DAOException("Objeto duplicado", e);
+               if(ex.getErrorCode() == 23505){
+                   throw new DAOException("Objeto duplicado", ex);
                }
            } catch (SQLException e1){
-               e.printStackTrace();
+               ex.printStackTrace();
            }
         } finally {
             try {
@@ -56,7 +56,7 @@ public class CuentaDAOH2Impl implements CuentaDAO{
         }
     }
     public void modificar(Cuenta c) throws DAOException{
-        long accountID = 1;
+        String accountID = c.getAccountID();
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
         long user = c.getUserID();
@@ -65,7 +65,7 @@ public class CuentaDAOH2Impl implements CuentaDAO{
         Connection conn = DBManager.connect();
         try {
             Statement s = conn.createStatement();
-            String sql = "UPDATE CUENTAS set ACCOUNTTYPE = '" + accountType + "', SALDO = '" + saldo + "', U = '" + user + "' WHERE ACCOUNTID = '" + accountID + "'";
+            java.lang.String sql = "UPDATE CUENTAS set ACCOUNTTYPE = '" + accountType + "', SALDO = '" + saldo + "', U = '" + user + "' WHERE ACCOUNTID = '" + accountID + "'";
             s.executeUpdate(sql);
             conn.commit();
         } catch (SQLException e) {
@@ -85,9 +85,30 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             }
         }
     }
-    public void eliminar(Cuenta c){
+    public void eliminar(Cuenta u) throws DAOException{
 
+        java.lang.String sql = "DELETE FROM CUENTAS WHERE ACCOUNTID = '" + u.getAccountID() + "'";
+        Connection conn = DBManager.connect();
+        try {
+            Statement stat = conn.createStatement();
+            stat.executeUpdate(sql);
+            conn.commit();
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                throw new DAOException("Error",ex);
+            }
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        }
     }
-    public List<Cuenta> obtenerTodos(){ return null;}
+    public List<Cuenta> obtenerTodos(){
+        return null;
+    }
     public Cuenta obtener(long id){return null;}
 }

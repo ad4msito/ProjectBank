@@ -1,19 +1,15 @@
 package controlador;
 
+import com.sun.org.apache.xpath.internal.operations.String;
+
 public class Cuenta {
-    private long accountID;
+    private String accountID;
     private String accountType;
     private float saldo;
     private Usuario u;
     //constructor:
-    public Cuenta(long accountID, String accountType, float saldo, Usuario u) {
+    public Cuenta(String accountID, String accountType, float saldo, Usuario u) {
         this.accountID = accountID;
-        this.accountType = accountType;
-        this.saldo = saldo;
-        this.u = u;
-    }
-
-    public Cuenta(String accountType, float saldo, Usuario u) {
         this.accountType = accountType;
         this.saldo = saldo;
         this.u = u;
@@ -23,11 +19,11 @@ public class Cuenta {
     }
     //getters y setters:
 
-    public long getAccountID() {
+    public String getAccountID() {
         return accountID;
     }
 
-    public void setAccountID(long accountID) {
+    public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
 

@@ -11,7 +11,7 @@ public class TableManager {
 
         Connection c = DBManager.connect();
 
-        String sql = "CREATE TABLE CUENTAS ( ACCOUNTID INTEGER IDENTITY, ACCOUNTTYPE VARCHAR(256), SALDO FLOAT, U INTEGER(10))";
+        String sql = "CREATE TABLE CUENTAS ( ACCOUNTID VARCHAR(256), ACCOUNTTYPE VARCHAR(256), SALDO FLOAT, U INTEGER(10))";
 
         try {
             Statement s = c.createStatement();

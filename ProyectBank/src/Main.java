@@ -20,16 +20,17 @@ public class Main {
             //crear usuarios/cuentas
             CuentaDAO n = new CuentaDAOH2Impl(conn);
 
-            Usuario u = new Usuario(111, "hola", "chau");
+            Usuario u = new Usuario(111, "adam@gmail.com", "1234");
 
-            Cuenta c = new Cuenta("CC",700,u);
-            Cuenta cb = new Cuenta("CA", 1000, u);
+            Cuenta c = new Cuenta("agus","CC",700,u);
+            Cuenta cb = new Cuenta("adam","CA", 1000, u);
             //datos:
             //Query
             n.insertar(c);
             n.insertar(cb);
-            c.setSaldo(500);
-            n.modificar(c);
+            cb.setSaldo(cb.getSaldo()-300);
+            n.modificar(cb);
+            n.eliminar(c);
         } catch(SQLException e){
             throw new DAOException("ERROR", e);
         } finally {
