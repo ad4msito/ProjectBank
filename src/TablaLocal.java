@@ -4,7 +4,7 @@ import DAO.DBManager;
 import java.sql.*;
 public class TablaLocal {
     public void setTable(String ID, String type, float sal, int userID) throws DAOException {
-        String accountID = ID;
+            String accountID = ID;
         String accountType = type;
         float saldo = sal;
         long user = userID;

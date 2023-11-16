@@ -1,4 +1,4 @@
-package controlador;
+package Controlador;
     public class Usuario {
         private long userID;
         private String userMail;

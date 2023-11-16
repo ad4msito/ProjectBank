@@ -1,4 +1,4 @@
-package controlador;
+package Controlador;
 
 public class Tarjeta {
     private long tarjetaID;

@@ -1,7 +1,7 @@
 package DAO;
 
 import java.lang.String;
-import controlador.Cuenta;
+import Controlador.Cuenta;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,17 +9,17 @@ import java.util.Date;
 import java.util.List;
 
 public class CuentaDAOH2Impl implements CuentaDAO{
-    final String INSERT = "INSERT INTO cuentas(accountID, accountType, saldo, u) VALUES(?, ?, ?, ?)";
-    final String UPDATE = "UPDATE cuentas SET accountType = ?, saldo = ? WHERE accountID = ?";
-    final String DELETE = "DELETE FROM cuentas WHERE accountID = ?";
+    //final String INSERT = "INSERT INTO cuentas(accountID, accountType, saldo, u) VALUES(?, ?, ?, ?)";
+    //final String UPDATE = "UPDATE cuentas SET accountType = ?, saldo = ? WHERE accountID = ?";
+    //final String DELETE = "DELETE FROM cuentas WHERE accountID = ?";
     final String GETALL = "SELECT accountID, accountType, saldo, u FROM cuentas ";
     final String GETONE = "SELECT ACCOUNTID, ACCOUNTTYPE, SALDO, U FROM CUENTAS WHERE ACCOUNTID = ?";
 
     private Connection conn;
 
-    /* public CuentaDAOH2Impl(Connection conn){
+    public CuentaDAOH2Impl(Connection conn){
         this.conn = conn;
-    }*/
+    }
 
 
     public void insertar(Cuenta c) throws DAOException{
@@ -52,7 +52,7 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             }
         }
     }
-    public void modificar(Cuenta c) throws DAOException{
+    public void actualizar(Cuenta c) throws DAOException{
         String accountID = c.getAccountID();
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
@@ -83,9 +83,9 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             }
         }
     }
-    public void eliminar(Cuenta u) throws DAOException{
+    public void eliminar(String id) throws DAOException{
 
-        String sql = "DELETE FROM CUENTAS WHERE ACCOUNTID = '" + u.getAccountID() + "'";
+        String sql = "DELETE FROM CUENTAS WHERE ACCOUNTID = '" + id + "'";
         Connection conn = DBManager.connect();
         try {
             Statement stat = conn.createStatement();
@@ -157,7 +157,6 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             rs = stat.executeQuery();
             if (rs.next()) {
                 a = convertir(rs);
-                System.out.println("Cuenta:" + a.toString());
             } else {
                 throw new DAOException("No se encontro ese registro");
             }
@@ -178,7 +177,7 @@ public class CuentaDAOH2Impl implements CuentaDAO{
                     throw new DAOException("ERROR EN SQL", ex2);
                 }
             }
-
+            System.out.println("Cuenta:" + a.toString());
             return a;
         }
     }
