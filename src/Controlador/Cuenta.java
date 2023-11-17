@@ -6,7 +6,6 @@ public class Cuenta {
     private String accountID;
     private String accountType;
     private float saldo;
-    private Usuario user;
     private long userID;
     //constructor:
 
@@ -15,13 +14,6 @@ public class Cuenta {
         this.accountType = accountType;
         this.saldo = saldo;
         this.userID = userID;
-    }
-
-    public Cuenta(String accountID, String accountType, float saldo, Usuario user) {
-        this.accountID = accountID;
-        this.accountType = accountType;
-        this.saldo = saldo;
-        this.user = user;
     }
 
     public Cuenta() {
@@ -52,20 +44,12 @@ public class Cuenta {
         this.saldo = saldo;
     }
 
-    public Usuario getUser() {
-        return user;
-    }
-
-    public void setUser(Usuario user) {
-        this.user = user;
-    }
-
     public long getUserID() {
-        return user.getUserID();
+        return userID;
     }
 
-    public void setUserID() {
-        this.userID = user.getUserID();
+    public void setUserID(long userID) {
+        this.userID = userID;
     }
 
     @Override

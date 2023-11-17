@@ -40,10 +40,6 @@ public class NuevoMain {
                 System.out.println(a.toString());
             }
             */
-            CuentaDAO dao = new CuentaDAOH2Impl(conn);
-            CuentaService service = new CuentaService(dao,conn);
-            CuentaGUI gui = new CuentaGUI(service);
-            gui.setVisible(true);
         } catch(SQLException e){
             throw new DAOException("ERROR", e);
         } finally {

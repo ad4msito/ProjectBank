@@ -9,18 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 public class CuentaDAOH2Impl implements CuentaDAO{
-    //final String INSERT = "INSERT INTO cuentas(accountID, accountType, saldo, u) VALUES(?, ?, ?, ?)";
-    //final String UPDATE = "UPDATE cuentas SET accountType = ?, saldo = ? WHERE accountID = ?";
-    //final String DELETE = "DELETE FROM cuentas WHERE accountID = ?";
     final String GETALL = "SELECT accountID, accountType, saldo, u FROM cuentas ";
     final String GETONE = "SELECT ACCOUNTID, ACCOUNTTYPE, SALDO, U FROM CUENTAS WHERE ACCOUNTID = ?";
-
     private Connection conn;
-
-    public CuentaDAOH2Impl(Connection conn){
-        this.conn = conn;
-    }
-
 
     public void insertar(Cuenta c) throws DAOException{
         String accountID = c.getAccountID();
