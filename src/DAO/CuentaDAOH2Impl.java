@@ -33,13 +33,13 @@ public class CuentaDAOH2Impl implements CuentaDAO{
                    throw new DAOException("Objeto duplicado", ex);
                }
            } catch (SQLException e1){
-               ex.printStackTrace();
+               throw new DAOException("Error al insertar",e1);
            }
         } finally {
             try {
                 conn.close();
             } catch (SQLException e1){
-                e1.printStackTrace();
+                throw new DAOException("Error al cerrar la conexion", e1);
             }
         }
     }
@@ -48,8 +48,6 @@ public class CuentaDAOH2Impl implements CuentaDAO{
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
         long user = c.getUserID();
-        Date d = new Date();
-
         Connection conn = DBManager.connect();
         try {
             Statement s = conn.createStatement();
@@ -64,13 +62,13 @@ public class CuentaDAOH2Impl implements CuentaDAO{
                     throw new DAOException("Objeto duplicado", e);
                 }
             } catch (SQLException e1){
-                e.printStackTrace();
+               throw new DAOException("Error al modificar");
             }
         } finally {
             try {
                 conn.close();
             } catch (SQLException e1){
-                e1.printStackTrace();
+                throw new DAOException("Error al cerrar la conexion", e1);
             }
         }
     }
@@ -87,13 +85,13 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             try {
                 conn.rollback();
             } catch (SQLException ex) {
-                throw new DAOException("Error",ex);
+                throw new DAOException("Error al eliminar",ex);
             }
         } finally {
             try {
                 conn.close();
             } catch (SQLException ex1) {
-                ex1.printStackTrace();
+                throw new DAOException("Error al cerrar la conexion", ex1);
             }
         }
     }
@@ -119,20 +117,20 @@ public class CuentaDAOH2Impl implements CuentaDAO{
                 System.out.println(cuentas);
             }
         } catch (SQLException ex) {
-            throw new DAOException("Error en sql", ex);
+            throw new DAOException("Error al obtener todos", ex);
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException ex1) {
-                    throw new DAOException("ERROR EN SQL", ex1);
+                    throw new DAOException("Error al cerrar conexion con el ResultSet", ex1);
                 }
             }
             if (stat != null) {
                 try {
                     stat.close();
                 } catch (SQLException ex2) {
-                    throw new DAOException("ERROR EN SQL", ex2);
+                    throw new DAOException("Error al cerrar conexion con el Statement", ex2);
                 }
             }
         } return cuentas;
@@ -152,20 +150,20 @@ public class CuentaDAOH2Impl implements CuentaDAO{
                 throw new DAOException("No se encontro ese registro");
             }
         } catch (SQLException ex) {
-            throw new DAOException("Error en sql", ex);
+            throw new DAOException("Error al obtener uno", ex);
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException ex1) {
-                    throw new DAOException("ERROR EN SQL", ex1);
+                    throw new DAOException("Error al cerrar conexion con el ResultSet", ex1);
                 }
             }
             if (stat != null) {
                 try {
                     stat.close();
                 } catch (SQLException ex2) {
-                    throw new DAOException("ERROR EN SQL", ex2);
+                    throw new DAOException("Error al cerrar conexion con el Statement", ex2);
                 }
             }
             System.out.println("Cuenta:" + a.toString());

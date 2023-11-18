@@ -4,8 +4,6 @@ import Controlador.Cuenta;
 import DAO.CuentaDAO;
 import DAO.CuentaDAOH2Impl;
 import DAO.DAOException;
-
-import java.sql.Connection;
 import java.util.List;
 
 public class CuentaService implements ServiceDAO<CuentaDAO, Cuenta> {
@@ -22,25 +20,36 @@ public class CuentaService implements ServiceDAO<CuentaDAO, Cuenta> {
     }
 
     @Override
-    public void insertarService(Cuenta t) throws DAOException{
-        cuentaDao.insertar(t);
+    public void insertarService(Cuenta t) throws DAOException, ServiceException {
+        try {
+            cuentaDao.insertar(t);
+        } catch (DAOException ex){
+            throw new ServiceException(ex.getMessage());
+        }
     }
 
     @Override
-    public void actualizarService(Cuenta t) throws DAOException {
-        cuentaDao.actualizar(t);
+    public void actualizarService(Cuenta t) throws DAOException, ServiceException {
+        try {
+            cuentaDao.actualizar(t);
+        } catch (DAOException ex){
+             throw new ServiceException(ex.getMessage());
+        }
     }
 
     @Override
-    public void eliminarService(String id) throws DAOException {
-       cuentaDao.eliminar(id);
+    public void eliminarService(String id) throws DAOException, ServiceException {
+       try{
+           cuentaDao.eliminar(id);
+       }catch (DAOException ex){
+           throw new ServiceException(ex.getMessage());
+       }
     }
 
     @Override
     public List<Cuenta> obtenerTodosService() throws DAOException {
         return cuentaDao.obtenerTodos();
     }
-
     @Override
     public Cuenta obtenerUnoService(String id) throws DAOException {
         return cuentaDao.obtener(id);
