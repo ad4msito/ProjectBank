@@ -3,24 +3,17 @@ package Service;
 import Controlador.Cuenta;
 import DAO.CuentaDAO;
 import DAO.CuentaDAOH2Impl;
-import DAO.DAOException;
+import Exceptions.DAOException;
+import Exceptions.ServiceException;
+
 import java.util.List;
 
-public class CuentaService implements ServiceDAO<CuentaDAO, Cuenta> {
+public class CuentaService implements Service<CuentaDAO, Cuenta> {
     private CuentaDAO cuentaDao = new CuentaDAOH2Impl();
     private Cuenta cuenta = new Cuenta();
-    public CuentaService(){
-    }
-    @Override
-    public CuentaDAO getDAO() {
-        if(cuentaDao ==null){
-            cuentaDao = new CuentaDAOH2Impl();
-        }
-        return cuentaDao;
-    }
 
     @Override
-    public void insertarService(Cuenta t) throws DAOException, ServiceException {
+    public void insertarService(Cuenta t) throws ServiceException {
         try {
             cuentaDao.insertar(t);
         } catch (DAOException ex){
@@ -29,16 +22,16 @@ public class CuentaService implements ServiceDAO<CuentaDAO, Cuenta> {
     }
 
     @Override
-    public void actualizarService(Cuenta t) throws DAOException, ServiceException {
+    public void actualizarService(Cuenta t) throws ServiceException {
         try {
-            cuentaDao.actualizar(t);
+            cuentaDao.modificar(t);
         } catch (DAOException ex){
              throw new ServiceException(ex.getMessage());
         }
     }
 
     @Override
-    public void eliminarService(String id) throws DAOException, ServiceException {
+    public void eliminarService(String id) throws ServiceException {
        try{
            cuentaDao.eliminar(id);
        }catch (DAOException ex){
@@ -47,12 +40,20 @@ public class CuentaService implements ServiceDAO<CuentaDAO, Cuenta> {
     }
 
     @Override
-    public List<Cuenta> obtenerTodosService() throws DAOException {
-        return cuentaDao.obtenerTodos();
+    public List<Cuenta> obtenerTodosService() throws ServiceException {
+        try {
+            return cuentaDao.obtenerTodos();
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
     @Override
-    public Cuenta obtenerUnoService(String id) throws DAOException {
-        return cuentaDao.obtener(id);
+    public Cuenta obtenerUnoService(String id) throws ServiceException{
+        try {
+            return cuentaDao.obtener(id);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
     public Cuenta convertirObjeto(String id, String t, float s, long u){
         cuenta.setAccountID(id);

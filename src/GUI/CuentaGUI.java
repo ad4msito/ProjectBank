@@ -1,10 +1,8 @@
 package GUI;
 
 import Controlador.Cuenta;
-import DAO.DAOException;
 import Service.CuentaService;
-import Service.ServiceException;
-
+import Exceptions.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -64,8 +62,6 @@ public class CuentaGUI extends JFrame {
         button4.addActionListener(e -> {
             try {
                 actionMostrarTodos();
-            } catch (DAOException ex) {
-                throw new RuntimeException(ex);
             } catch (ServiceException ex) {
                 throw new RuntimeException(ex);
             }
@@ -124,7 +120,7 @@ public class CuentaGUI extends JFrame {
         jp2.add(tf2); // Añadir el segundo campo de texto
         jp1.add(l3);
         jp2.add(tf3); // Añadir el tercer campo de texto
-        ventanaAgregar.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        ventanaAgregar.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventanaAgregar.setVisible(true);
 
         ActionListener actionInsertar = new ActionListener() {
@@ -137,8 +133,6 @@ public class CuentaGUI extends JFrame {
                 try {
                     cuentaService.insertarService(cuentaService.convertirObjeto(accountID, accountType, saldo, user));
                     JOptionPane.showMessageDialog(ventanaAgregar, "La acción se realizó con éxito");
-                } catch (DAOException ex) {
-                    JOptionPane.showMessageDialog(ventanaAgregar, "Error en la capa de DAO:" + ex.getMessage());
                 } catch (ServiceException ex) {
                     JOptionPane.showMessageDialog(ventanaAgregar, "Error en la capa de servicios:" + ex.getMessage());
                 }
@@ -177,8 +171,6 @@ public class CuentaGUI extends JFrame {
                 try {
                     cuentaService.eliminarService(id);
                     JOptionPane.showMessageDialog(ventanaEliminar, "La acción se realizó con éxito");
-                } catch (DAOException ex) {
-                    JOptionPane.showMessageDialog(ventanaEliminar, "Error en la capa de DAO:" + ex.getMessage());
                 } catch (ServiceException ex) {
                     JOptionPane.showMessageDialog(ventanaEliminar, "Error en la capa de servicios:" + ex.getMessage());
                 }
@@ -255,8 +247,6 @@ public class CuentaGUI extends JFrame {
                 try {
                     cuentaService.actualizarService(cuentaService.convertirObjeto(accountID, accountType, saldo, user));
                     JOptionPane.showMessageDialog(ventanaModificar, "La acción se realizó con éxito");
-                } catch (DAOException ex) {
-                    JOptionPane.showMessageDialog(ventanaModificar, "Error en la capa de DAO:" + ex.getMessage());
                 } catch (ServiceException ex) {
                     JOptionPane.showMessageDialog(ventanaModificar, "Error en la capa de servicios:" + ex.getMessage());
                 }
@@ -267,7 +257,7 @@ public class CuentaGUI extends JFrame {
 
     }
 
-    private void actionMostrarTodos() throws DAOException, ServiceException {
+    private void actionMostrarTodos() throws ServiceException {
         model.setRowCount(0);
         //jp1.add(scroll);
         List<Cuenta> cuentas = cuentaService.obtenerTodosService();

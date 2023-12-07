@@ -2,18 +2,20 @@ package DAO;
 
 import java.lang.String;
 import Controlador.Cuenta;
+import Exceptions.DAOException;
+import manager.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CuentaDAOH2Impl implements CuentaDAO{
+public class CuentaDAOH2Impl implements CuentaDAO {
     final String GETALL = "SELECT accountID, accountType, saldo, u FROM cuentas ";
     final String GETONE = "SELECT ACCOUNTID, ACCOUNTTYPE, SALDO, U FROM CUENTAS WHERE ACCOUNTID = ?";
     private Connection conn;
 
-    public void insertar(Cuenta c) throws DAOException{
+    public void insertar(Cuenta c) throws DAOException {
         String accountID = c.getAccountID();
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
@@ -43,7 +45,9 @@ public class CuentaDAOH2Impl implements CuentaDAO{
             }
         }
     }
-    public void actualizar(Cuenta c) throws DAOException{
+
+
+    public void modificar(Cuenta c) throws DAOException{
         String accountID = c.getAccountID();
         String accountType = c.getAccountType();
         float saldo = c.getSaldo();
