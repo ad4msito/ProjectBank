@@ -1,52 +1,42 @@
 package Controlador;
 
+import java.util.Date;
+
 public class Tarjeta {
-    private long tarjetaID;
-    private float limiteCredito;
-    private float saldoDeudor;
-    private Usuario u;
-    //constructores:
+    private Long id;
+    private String numero;
+    private Date fechaExpiracion;
+    private UsuarioCuenta usuario;
 
-    public Tarjeta() {
+    public Long getId() {
+        return id;
     }
 
-    public Tarjeta(long tarjetaID, float limiteCredito, float saldoDeudor, Usuario u) {
-        this.tarjetaID = tarjetaID;
-        this.limiteCredito = limiteCredito;
-        this.saldoDeudor = saldoDeudor;
-        this.u = u;
-    }
-    //getters y setters:
-
-    public long getTarjetaID() {
-        return tarjetaID;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setTarjetaID(long tarjetaID) {
-        this.tarjetaID = tarjetaID;
+    public String getNumero() {
+        return numero;
     }
 
-    public float getLimiteCredito() {
-        return limiteCredito;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
-    public void setLimiteCredito(float limiteCredito) {
-        this.limiteCredito = limiteCredito;
+    public Date getFechaExpiracion() {
+        return fechaExpiracion;
     }
 
-    public float getSaldoDeudor() {
-        return saldoDeudor;
+    public void setFechaExpiracion(Date fechaExpiracion) {
+        this.fechaExpiracion = fechaExpiracion;
     }
 
-    public void setSaldoDeudor(float saldoDeudor) {
-        this.saldoDeudor = saldoDeudor;
+    public UsuarioCuenta getUsuario() {
+        return usuario;
     }
 
-    public Usuario getU() {
-        return u;
-    }
-
-    public void setU(Usuario u) {
-        this.u = u;
+    public void setUsuario(UsuarioCuenta usuario) {
+        this.usuario = usuario;
     }
 }

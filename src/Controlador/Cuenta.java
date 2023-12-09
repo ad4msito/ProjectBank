@@ -1,64 +1,70 @@
 package Controlador;
 
-import java.lang.String;
-
 public class Cuenta {
-    private String accountID;
-    private String accountType;
-    private float saldo;
-    private long userID;
-    //constructor:
+    private Long id;
+    private String alias;
+    private Double saldo;
+    private int tipoCuenta;
+    private UsuarioCuenta usuarioCuenta;
+    private Double tasaInteres;
 
-    public Cuenta(String accountID, String accountType, float saldo, long userID) {
-        this.accountID = accountID;
-        this.accountType = accountType;
-        this.saldo = saldo;
-        this.userID = userID;
-    }
 
     public Cuenta() {
     }
-    //getters y setters:
 
-    public String getAccountID() {
-        return accountID;
+    public Cuenta(Long id, String alias, Double saldo, int tipoCuenta, UsuarioCuenta usuarioCuenta) {
+        this.id = id;
+        this.alias = alias;
+        this.saldo = saldo;
+        this.tipoCuenta = tipoCuenta;
+        this.usuarioCuenta = usuarioCuenta;
     }
 
-    public void setAccountID(String accountID) {
-        this.accountID = accountID;
+    public Long getId() {
+        return id;
     }
 
-    public String getAccountType() {
-        return accountType;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
-
-    public float getSaldo() {
+    public Double getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(float saldo) {
+    public void setSaldo(Double saldo) {
         this.saldo = saldo;
     }
 
-    public long getUserID() {
-        return userID;
+    public UsuarioCuenta getUsuarioCuenta() {
+        return usuarioCuenta;
     }
 
-    public void setUserID(long userID) {
-        this.userID = userID;
+    public void setUsuarioCuenta(UsuarioCuenta usuarioCuenta) {
+        this.usuarioCuenta = usuarioCuenta;
     }
 
-    @Override
-    public java.lang.String toString() {
-        return "Cuenta{" +
-                "accountID=" + accountID +
-                ", accountType=" + accountType +
-                ", saldo=" + saldo +
-                ", u=" + userID +
-                '}';
+    public int getTipoCuenta() {
+        return tipoCuenta;
+    }
+
+    public void setTipoCuenta(int tipoCuenta) {
+        this.tipoCuenta = tipoCuenta;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public Double getTasaInteres() {
+        return tasaInteres;
+    }
+
+    public void setTasaInteres(Double tasaInteres) {
+            this.tasaInteres = tasaInteres;
     }
 }

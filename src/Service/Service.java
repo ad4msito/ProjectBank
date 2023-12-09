@@ -5,7 +5,7 @@ import Exceptions.ServiceException;
 
 import java.util.List;
 
-public interface Service<Type/*DAO*/,Type2/*CONTROLADOR*/> {
+public interface Service<Type/*DAO.DAO*/,Type2/*CONTROLADOR*/> {
     void insertarService(Type2 t) throws  ServiceException;
     void actualizarService(Type2 t) throws  ServiceException;
     void eliminarService(String id) throws  ServiceException;
