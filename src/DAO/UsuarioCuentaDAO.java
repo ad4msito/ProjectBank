@@ -1,24 +1,28 @@
 package DAO;
 
 import Controlador.UsuarioCuenta;
+import DAO.reusable.deleteMethodDAO;
 import Exceptions.DAOException;
+import jdk.nashorn.internal.ir.CatchNode;
 import manager.DBManager;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long>{
-    final String strCreate = "INSERT INTO USUARIOS (ID, NOMBRE, EMAIL, PASSWORD) VALUES (?, ?, ?, ?)";
+public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
+    final String strCreate = "INSERT INTO USUARIOS (NOMBRE, EMAIL, PASSWORD) VALUES (?, ?, ?)";
     final String strUpdate = "UPDATE USUARIOS SET NOMBRE= ?, EMAIL = ?, PASSWORD = ? WHERE ID = ?";
     final String strDelete = "DELETE FROM Usuarios WHERE id = ?";
-    final String strReadAll = "SELECT * FROMM USUARIOS";
-    final String strReadOne = "SELECT * FROM USUARIOS WHERE ID = ?";
-    Connection conn = null;
+    final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD FROM USUARIOS";
+    final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD FROM USUARIOS WHERE ID = ?";
+
 
     @Override
     public void create(UsuarioCuenta a, Connection conn) throws DAOException {
-        Long id = a.getId();
         String nombre = a.getNombre();
         String email = a.getEmail();
         String pass = a.getPassword();
@@ -26,25 +30,30 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long>{
         try {
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(strCreate);
-            ps.setLong(1,id);
-            ps.setString(2,nombre);
-            ps.setString(3,email);
-            ps.setString(4,pass);
+            ps.setString(1, nombre);
+            ps.setString(2, email);
+            ps.setString(3, pass);
             ps.executeUpdate();
             conn.commit();
-        } catch (SQLException e1){
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                a.setId(rs.getLong(1));
+            }
+        } catch (SQLException e1) {
             try {
                 conn.rollback();
-                if(e1.getErrorCode() == 23505){
+                if (e1.getErrorCode() == 23505) {
                     throw new DAOException(e1.getMessage());//objduplicado
                 }
-            } catch (SQLException e2){
+            } catch (SQLException e2) {
                 throw new DAOException(e2.getMessage());//error al insertar
             }
         } finally {
             try {
-                ps.close();
-            } catch (SQLException e3){
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e3) {
                 throw new DAOException(e3.getMessage());//error al cerrar
             }
         }
@@ -57,24 +66,27 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long>{
         String nombre = a.getNombre();
         String email = a.getEmail();
         String pass = a.getPassword();
-        conn = DBManager.connect();
+        Long id = a.getId();
         PreparedStatement ps = null;
         try {
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(strUpdate);
-            ps.setString(1,nombre);
+            ps.setString(1, nombre);
             ps.setString(2, email);
-            ps.setString(3,pass);
+            ps.setString(3, pass);
+            ps.setLong(4, id);
             ps.executeUpdate();
             conn.commit();
-        }catch (SQLException e1){
+        } catch (SQLException e1) {
             try {
                 conn.rollback();
-            } catch (SQLException e2){
+            } catch (SQLException e2) {
                 throw new DAOException(e2.getMessage());
-            }finally {
+            } finally {
                 try {
-                    ps.close();
+                    if (ps != null) {
+                        ps.close();
+                    }
                 } catch (SQLException e3) {
                     throw new DAOException(e3.getMessage());
                 }
@@ -83,33 +95,69 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long>{
     }
 
     @Override
-    public void delete(Long a, Connection conn) throws DAOException {
-        PreparedStatement ps = null;
-        try {
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement(strDelete);
-            ps.setLong(1,a);
-            ps.executeUpdate();
-            conn.commit();
-        } catch (SQLException e1){
-                throw new DAOException(e1.getMessage());
-            }finally{
-                try{
-                    ps.close();
-                } catch (SQLException e3){
-                    throw new DAOException(e3.getMessage());
-                }
-            }
-        }
+    public void delete(Long a, Connection c) throws DAOException {
+        deleteMethodDAO.methodDelete(a, c, strDelete);
+
+    }
+
+    private UsuarioCuenta convertir(ResultSet rs) throws DAOException, SQLException {
+        Long id = rs.getLong("ID");
+        String nombre = rs.getString("NOMBRE");
+        String email = rs.getString("EMAIL");
+        String pass = rs.getString("PASSWORD");
+        UsuarioCuenta usuario = new UsuarioCuenta(nombre, email, pass);
+        usuario.setId(id);
+        return usuario;
+    }
 
     @Override
     public List<UsuarioCuenta> readAll(Connection conn) throws DAOException {
-        return null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<UsuarioCuenta> usuarios = new ArrayList<>();
+        try {
+            conn.setAutoCommit(false);
+            ps = conn.prepareStatement(strReadAll);
+            rs = ps.executeQuery();
+            conn.commit();
+            while (rs.next()) {
+                usuarios.add(convertir(rs));
+            }
+        } catch (SQLException e1) {
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return usuarios;
     }
 
     @Override
-    public UsuarioCuenta readOne(String id, Connection conn) throws DAOException {
-        return null;
+    public UsuarioCuenta readOne(Long id, Connection conn) throws DAOException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        UsuarioCuenta usuario = null;
+        try {
+            ps = conn.prepareStatement(strReadOne);
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                usuario = convertir(rs);
+            }
+        } catch (SQLException e1) {
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return usuario;
     }
 }
-

@@ -1,35 +1,37 @@
 package DAO;
 
+import Controlador.Tarjeta;
 import Controlador.Transaccion;
 import Controlador.Transacciones.TransaccionCuenta;
+import Controlador.Transacciones.TransaccionTarjeta;
+import DAO.reusable.deleteMethodDAO;
 import Exceptions.DAOException;
+import manager.DBManager;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
-    final String strCreate = "INSERT INTO TRANSACCIONCUENTA(ID,FECHA,MONTO,ORIGEN,DESTINO) VALUES (?,?,?,?,?)";
-    final String strUpdate = "UPDATE TRANSACCIONCUENTA SET FECHA=?, MONTO=? WHERE ID = ?";
-    final String strDelete = "DELETE FROM TRANSACCIONCUENTA WHERE ID = ?";
+    final String strCreate = "INSERT INTO TRANSACCIONESCUENTA(FECHA,MONTO,CUENTA,DESTINO) VALUES (?,?,?,?)";
+    final String strUpdate = "UPDATE TRANSACCIONESCUENTA SET FECHA=?, MONTO=?, CUENTA=?, DESTINO=? WHERE ID = ?";
+    final String strDelete = "DELETE FROM TRANSACCIONESCUENTA WHERE ID = ?";
+    final String strReadAll = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA";
+    final String strReadOne = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA WHERE ID = ?";
     @Override
     public void create(TransaccionCuenta a, Connection c) throws DAOException {
-        Long id = a.getId();
         Date fecha = a.getFecha();
         Double monto = a.getMonto();
-        Long origen = a.getCuentaOrigen().getId();
-        Long destino = a.getCuentaDestino().getId();
+        Long cuenta = a.getCuentaOrigen();
+        Long destino = a.getCuentaDestino();
         PreparedStatement ps = null;
         try {
             c.setAutoCommit(false);
             ps = c.prepareStatement(strCreate);
-            ps.setLong(1,id);
-            ps.setDate(2,fecha);
-            ps.setDouble(3,monto);
-            ps.setLong(4,origen);
-            ps.setLong(5,destino);
+            ps.setDate(1,fecha);
+            ps.setDouble(2,monto);
+            ps.setLong(3,cuenta);
+            ps.setLong(4,destino);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1) {
@@ -40,7 +42,8 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
             }
         } finally {
             try {
-                ps.close();
+                if(ps!=null){
+                ps.close();}
             } catch (SQLException e3){
                 throw new DAOException(e3.getMessage());
             }
@@ -51,12 +54,18 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
     public void update(TransaccionCuenta a, Connection c) throws DAOException {
         Date fecha = a.getFecha();
         Double monto = a.getMonto();
+        Long origen = a.getCuentaOrigen();
+        Long destino = a.getCuentaDestino();
+        Long id = a.getId();
         PreparedStatement ps = null;
         try {
             c.setAutoCommit(false);
             ps = c.prepareStatement(strUpdate);
             ps.setDate(1,fecha);
             ps.setDouble(2,monto);
+            ps.setLong(3,origen);
+            ps.setLong(4,destino);
+            ps.setLong(5,id);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1){
@@ -68,7 +77,8 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
             }
         } finally {
             try {
-                ps.close();
+                if(ps!=null){
+                    ps.close();}
             } catch (SQLException e3){
                 throw new DAOException(e3.getMessage());//error al cerrar conexion
             }
@@ -77,37 +87,70 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
 
     @Override
     public void delete(Long a, Connection c) throws DAOException {
-        PreparedStatement ps = null;
-        Long id = a;
-        try {
-            c.setAutoCommit(false);
-            ps = c.prepareStatement(strDelete);
-            ps.executeUpdate();
-            c.commit();
-        }catch (SQLException e1){
-            try {
-                c.rollback();
-                throw new DAOException(e1.getMessage());
-            } catch (SQLException e2){
-                throw new DAOException(e2.getMessage());
-            } finally {
-                try {
-                    ps.close();
-                } catch (SQLException e3) {
-                    throw new DAOException(e3.getMessage());
-                }
-            }
+        deleteMethodDAO.methodDelete(a, c, strDelete);
 
-        }
+    }
+    private TransaccionCuenta convertir(ResultSet rs) throws SQLException {
+        Long id = rs.getLong("ID");
+        Date fecha = rs.getDate("FECHA");
+        Double monto = rs.getDouble("MONTO");
+        Long cuenta = rs.getLong("CUENTA");
+        Long destino = rs.getLong("DESTINO");
+        TransaccionCuenta transaccion = new TransaccionCuenta(fecha, monto, cuenta, destino);
+        transaccion.setId(id);
+        return transaccion;
     }
 
     @Override
     public List<TransaccionCuenta> readAll(Connection c) throws DAOException {
-        return null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<TransaccionCuenta> transacciones = new ArrayList<>();
+        try{
+            c.setAutoCommit(false);
+            ps = c.prepareStatement(strReadAll);
+            rs = ps.executeQuery();
+            c.commit();
+            while(rs.next()){
+                transacciones.add(convertir(rs));
+            }
+        } catch (SQLException e1){
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return transacciones;
     }
 
     @Override
-    public TransaccionCuenta readOne(String id, Connection c) throws DAOException {
-        return null;
+    public TransaccionCuenta readOne(Long id, Connection c) throws DAOException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        TransaccionCuenta transaccion = null;
+        try{
+            c.setAutoCommit(false);
+            ps = c.prepareStatement(strReadOne);
+            ps.setLong(1,id);
+            rs = ps.executeQuery();
+            c.commit();
+            if(rs.next()){
+                transaccion = convertir(rs);
+            }
+        } catch (SQLException e1){
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return transaccion;
     }
 }

@@ -3,13 +3,13 @@ package Controlador.Transacciones;
 import Controlador.Cuenta;
 import Controlador.Transaccion;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class TransaccionCuenta extends Transaccion {
-    private Cuenta cuentaOrigen;
-    private Cuenta cuentaDestino;
-    public TransaccionCuenta(Long id, Date fecha, Double monto, Cuenta origen, Cuenta destino){
-        super(id,fecha,monto);
+    private Long cuentaOrigen;
+    private Long cuentaDestino;
+    public TransaccionCuenta( Date fecha, Double monto, Long origen, Long destino){
+        super(fecha,monto);
         this.cuentaOrigen = origen;
         this.cuentaDestino = destino;
         super.tipoTransaccion = 1;
@@ -18,19 +18,31 @@ public class TransaccionCuenta extends Transaccion {
     public TransaccionCuenta() {
     }
 
-    public Cuenta getCuentaOrigen() {
+    public Long getCuentaOrigen() {
         return cuentaOrigen;
     }
 
-    public void setCuentaOrigen(Cuenta cuentaOrigen) {
+    public void setCuentaOrigen(Long cuentaOrigen) {
         this.cuentaOrigen = cuentaOrigen;
     }
 
-    public Cuenta getCuentaDestino() {
+    public Long getCuentaDestino() {
         return cuentaDestino;
     }
 
-    public void setCuentaDestino(Cuenta cuentaDestino) {
+    public void setCuentaDestino(Long cuentaDestino) {
         this.cuentaDestino = cuentaDestino;
+    }
+
+    @Override
+    public String toString() {
+        return "TransaccionCuenta{" +
+                "cuentaOrigen=" + cuentaOrigen +
+                ", cuentaDestino=" + cuentaDestino +
+                ", id=" + id +
+                ", fecha=" + fecha +
+                ", monto=" + monto +
+                ", tipoTransaccion=" + tipoTransaccion +
+                '}';
     }
 }

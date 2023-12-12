@@ -5,12 +5,6 @@ public class UsuarioCuenta {
     private String email;
     private String password;
 
-    public UsuarioCuenta(Long id, String nombre, String email, String password) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-        this.password = password;
-    }
 
     public UsuarioCuenta() {
     }
@@ -20,6 +14,8 @@ public class UsuarioCuenta {
         this.email = email;
         this.password = password;
     }
+
+
 
     public Long getId() {
         return id;
@@ -53,4 +49,13 @@ public class UsuarioCuenta {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "UsuarioCuenta{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

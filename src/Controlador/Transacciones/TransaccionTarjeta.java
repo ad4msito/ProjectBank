@@ -4,15 +4,43 @@ import Controlador.Cuenta;
 import Controlador.Tarjeta;
 import Controlador.Transaccion;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class TransaccionTarjeta extends Transaccion {
-    private Tarjeta tarjetaOrigen;
-    private Cuenta cuentaDestino;
-    public TransaccionTarjeta(Long id, Date fecha, Double monto, Tarjeta origen, Cuenta destino){
-        super(id,fecha,monto);
+    private Long tarjetaOrigen;
+    private Long cuentaDestino;
+    public TransaccionTarjeta( Date fecha, Double monto, Long origen, Long destino){
+        super(fecha,monto);
         super.tipoTransaccion = 2;
         this.tarjetaOrigen = origen;
         this.cuentaDestino = destino;
+    }
+
+    public Long getTarjetaOrigen() {
+        return tarjetaOrigen;
+    }
+
+    public void setTarjetaOrigen(Long tarjetaOrigen) {
+        this.tarjetaOrigen = tarjetaOrigen;
+    }
+
+    public Long getCuentaDestino() {
+        return cuentaDestino;
+    }
+
+    public void setCuentaDestino(Long cuentaDestino) {
+        this.cuentaDestino = cuentaDestino;
+    }
+
+    @Override
+    public String toString() {
+        return "TransaccionTarjeta{" +
+                "tarjetaOrigen=" + tarjetaOrigen +
+                ", cuentaDestino=" + cuentaDestino +
+                ", id=" + id +
+                ", fecha=" + fecha +
+                ", monto=" + monto +
+                ", tipoTransaccion=" + tipoTransaccion +
+                '}';
     }
 }

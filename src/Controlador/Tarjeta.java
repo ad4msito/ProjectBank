@@ -1,12 +1,17 @@
 package Controlador;
 
-import java.util.Date;
-
 public class Tarjeta {
     private Long id;
-    private String numero;
-    private Date fechaExpiracion;
-    private UsuarioCuenta usuario;
+    private int numero;
+    private Double limite;
+    private Long usuarioID;
+
+    public Tarjeta(int numero, Double limite, Long usuario) {
+
+        this.numero = numero;
+        this.limite = limite;
+        this.usuarioID = usuario;
+    }
 
     public Long getId() {
         return id;
@@ -16,27 +21,37 @@ public class Tarjeta {
         this.id = id;
     }
 
-    public String getNumero() {
+    public int getNumero() {
         return numero;
     }
 
-    public void setNumero(String numero) {
+    public void setNumero(int numero) {
         this.numero = numero;
     }
 
-    public Date getFechaExpiracion() {
-        return fechaExpiracion;
+    public Double getLimite() {
+        return limite;
     }
 
-    public void setFechaExpiracion(Date fechaExpiracion) {
-        this.fechaExpiracion = fechaExpiracion;
+    public void setLimite(Double limite) {
+        this.limite = limite;
     }
 
-    public UsuarioCuenta getUsuario() {
-        return usuario;
+    public Long getUsuarioID() {
+        return usuarioID;
     }
 
-    public void setUsuario(UsuarioCuenta usuario) {
-        this.usuario = usuario;
+    public void setUsuarioID(Long usuarioID) {
+        this.usuarioID = usuarioID;
+    }
+
+    @Override
+    public String toString() {
+        return "Tarjeta{" +
+                "id=" + id +
+                ", numero=" + numero +
+                ", limite=" + limite +
+                ", usuarioID=" + usuarioID +
+                '}';
     }
 }

@@ -5,15 +5,14 @@ public class Cuenta {
     private String alias;
     private Double saldo;
     private int tipoCuenta;
-    private UsuarioCuenta usuarioCuenta;
+    private Long usuarioCuenta;
     private Double tasaInteres;
 
 
     public Cuenta() {
     }
 
-    public Cuenta(Long id, String alias, Double saldo, int tipoCuenta, UsuarioCuenta usuarioCuenta) {
-        this.id = id;
+    public Cuenta(String alias, Double saldo, int tipoCuenta, Long usuarioCuenta) {
         this.alias = alias;
         this.saldo = saldo;
         this.tipoCuenta = tipoCuenta;
@@ -36,11 +35,11 @@ public class Cuenta {
         this.saldo = saldo;
     }
 
-    public UsuarioCuenta getUsuarioCuenta() {
+    public Long getUsuarioCuenta() {
         return usuarioCuenta;
     }
 
-    public void setUsuarioCuenta(UsuarioCuenta usuarioCuenta) {
+    public void setUsuarioCuenta(Long usuarioCuenta) {
         this.usuarioCuenta = usuarioCuenta;
     }
 
@@ -66,5 +65,17 @@ public class Cuenta {
 
     public void setTasaInteres(Double tasaInteres) {
             this.tasaInteres = tasaInteres;
+    }
+
+    @Override
+    public String toString() {
+        return "Cuenta{" +
+                "id=" + id +
+                ", alias='" + alias + '\'' +
+                ", saldo=" + saldo +
+                ", tipoCuenta=" + tipoCuenta +
+                ", usuarioCuenta=" + usuarioCuenta +
+                ", tasaInteres=" + tasaInteres +
+                '}';
     }
 }
