@@ -3,6 +3,7 @@ package DAO;
 import Controlador.UsuarioCuenta;
 import DAO.reusable.deleteMethodDAO;
 import Exceptions.DAOException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import jdk.nashorn.internal.ir.CatchNode;
 import manager.DBManager;
 
@@ -12,13 +13,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
     final String strCreate = "INSERT INTO USUARIOS (NOMBRE, EMAIL, PASSWORD) VALUES (?, ?, ?)";
     final String strUpdate = "UPDATE USUARIOS SET NOMBRE= ?, EMAIL = ?, PASSWORD = ? WHERE ID = ?";
     final String strDelete = "DELETE FROM Usuarios WHERE id = ?";
-    final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD FROM USUARIOS";
-    final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD FROM USUARIOS WHERE ID = ?";
+    final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS";
+    final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE ID = ?";
+    final String strReadbyEmail = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE EMAIL = ?";
 
 
     @Override
@@ -105,8 +108,10 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
         String nombre = rs.getString("NOMBRE");
         String email = rs.getString("EMAIL");
         String pass = rs.getString("PASSWORD");
+        Boolean esadmin = rs.getBoolean("ESADMIN");
         UsuarioCuenta usuario = new UsuarioCuenta(nombre, email, pass);
         usuario.setId(id);
+        usuario.setEsAdmin(esadmin);
         return usuario;
     }
 
@@ -150,6 +155,29 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
             }
         } catch (SQLException e1) {
             throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return usuario;
+    }
+    public UsuarioCuenta readEmail(String email, Connection conn) throws DAOException{
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        UsuarioCuenta usuario = null;
+        try {
+            ps = conn.prepareStatement(strReadbyEmail);
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                usuario = convertir(rs);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e.getMessage());
         } finally {
             try {
                 ps.close();

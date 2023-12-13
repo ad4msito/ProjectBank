@@ -4,6 +4,7 @@ public class UsuarioCuenta {
     private String nombre;
     private String email;
     private String password;
+    private Boolean esAdmin;
 
 
     public UsuarioCuenta() {
@@ -47,6 +48,14 @@ public class UsuarioCuenta {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getEsAdmin() {
+        return esAdmin;
+    }
+
+    public void setEsAdmin(Boolean esAdmin) {
+        this.esAdmin = esAdmin;
     }
 
     @Override

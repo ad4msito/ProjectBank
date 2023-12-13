@@ -4,6 +4,7 @@ import Controlador.UsuarioCuenta;
 import DAO.UsuarioCuentaDAO;
 import Exceptions.DAOException;
 import Exceptions.ServiceException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import manager.DBManager;
 
 import java.sql.Connection;
@@ -62,4 +63,40 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
             throw new ServiceException(e.getMessage());
         }
     }
+    public UsuarioCuenta readEmail(String email)throws ServiceException{
+            try {
+                return usuarioCuentaDAO.readEmail(email, conn);
+            } catch (DAOException e) {
+                throw new ServiceException(e.getMessage());
+            }
+    }
+    public Boolean verificarCredenciales(String u, String pass) throws ServiceException {
+        try {
+            UsuarioCuenta user = usuarioCuentaDAO.readEmail(u,conn);
+            if(user!=null) {
+                if(user.getPassword().equals(pass)){
+                    return true;
+                }
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+        return false;
+    }
+    public Boolean verificarEsAdmin(String mail, String pass) throws ServiceException {
+        try {
+            UsuarioCuenta user = usuarioCuentaDAO.readEmail(mail,conn);
+            if (user != null) {
+                if (user.getPassword().equals((pass))) {
+                    if(user.getEsAdmin()){
+                        return true;
+                    }
+                }
+            }
+        } catch (DAOException e){
+            throw new ServiceException(e.getMessage());
+        }
+        return false;
+    }
+
 }
