@@ -1,14 +1,16 @@
 package GUI;
 
+import Controlador.UsuarioCuenta;
 import Exceptions.ServiceException;
+import GUI.Logos.ObtenerImagen;
 import Service.UsuarioCuentaService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Login extends JFrame {
-    private Container container;
+
+public class Login {
     private JLabel userLabel;
     private JTextField userTextField;
     private JLabel passwordLabel;
@@ -18,65 +20,91 @@ public class Login extends JFrame {
     private UsuarioCuentaService usuarioCuentaService;
     private AdminPanel adminPanel;
     private UsuarioPanel usuarioPanel;
+    private UsuarioCuenta usuarioCuenta;
+    private Long usuarioID;
+    private ObtenerImagen obtenerImagen;
 
-    public Login() {
+    public void loginPage() {
+        this.obtenerImagen = new ObtenerImagen();
         this.usuarioCuentaService = new UsuarioCuentaService();
-        setTitle("Inicio de sesión");
-        setBounds(300, 90, 400, 200);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
+        int width = 400;
+        int height = 200;
+        JFrame frame = new JFrame();
+        frame.setTitle("Inicio de sesión");
+        frame.setBounds(300, 90, width, height);
+        frame.setIconImage(new ImageIcon(obtenerImagen.obtener2()).getImage());
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setResizable(false);
 
-        container = getContentPane();
-        container.setLayout(null);
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setPreferredSize(new Dimension(width,height));
+        panelPrincipal.setLayout(null);
+        frame.add(panelPrincipal);
 
         userLabel = new JLabel("Usuario");
         userLabel.setBounds(50, 30, 100, 30);
-        container.add(userLabel);
+        panelPrincipal.add(userLabel);
 
         userTextField = new JTextField();
         userTextField.setBounds(150, 30, 150, 30);
-        container.add(userTextField);
+        panelPrincipal.add(userTextField);
 
         passwordLabel = new JLabel("Contraseña");
         passwordLabel.setBounds(50, 70, 100, 30);
-        container.add(passwordLabel);
+        panelPrincipal.add(passwordLabel);
 
         passwordField = new JPasswordField();
         passwordField.setBounds(150, 70, 150, 30);
-        container.add(passwordField);
+        panelPrincipal.add(passwordField);
 
         loginButton = new JButton("Iniciar sesión");
         loginButton.setBounds(50, 110, 250, 30);
-        container.add(loginButton);
+        panelPrincipal.add(loginButton);
 
         statusLabel = new JLabel("");
         statusLabel.setBounds(50, 150, 250, 30);
-        container.add(statusLabel);
+        panelPrincipal.add(statusLabel);
 
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String usuario = userTextField.getText();
-                String contraseña = new String(passwordField.getPassword());
+                String contrasena = new String(passwordField.getPassword());
                 try {
-                    if(usuarioCuentaService.verificarCredenciales(usuario,contraseña)) {
-                        if(usuarioCuentaService.verificarEsAdmin(usuario,contraseña)){
-                            dispose();
-                            adminPanel = new AdminPanel();
+                    if (usuarioCuentaService.verificarCredenciales(usuario, contrasena)) {
+                        if (usuarioCuentaService.verificarEsAdmin(usuario, contrasena)) {
+
+                            usuarioCuenta = usuarioCuentaService.readEmail(usuario);
+                            setUsuarioID(usuarioCuenta.getId());
+                            frame.dispose();
+                            adminPanel = new AdminPanel(usuarioID);
+
                         } else {
-                            dispose();
-                            usuarioPanel = new UsuarioPanel();
+
+                            usuarioCuenta = usuarioCuentaService.readEmail(usuario);
+                            setUsuarioID(usuarioCuenta.getId());
+                            frame.dispose();
+                            usuarioPanel = new UsuarioPanel(usuarioID);
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Los datos ingresados no son correctos.", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (ServiceException ex) {
-                    JOptionPane.showMessageDialog(null, "Error al verificar datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error al verificar datos" + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
 
                 }
-    }
-});
+            }
+        });
 
-        setVisible(true);
+        frame.setVisible(true);
+    }
+
+    public Long getUsuarioID() {
+        return usuarioID;
+    }
+
+    public void setUsuarioID(Long usuarioID) {
+        this.usuarioID = usuarioID;
     }
 
     public static void main(String[] args) {

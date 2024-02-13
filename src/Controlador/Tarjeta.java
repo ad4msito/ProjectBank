@@ -5,12 +5,19 @@ public class Tarjeta {
     private int numero;
     private Double limite;
     private Long usuarioID;
-
+    private Double saldoAdeudado;
     public Tarjeta(int numero, Double limite, Long usuario) {
 
         this.numero = numero;
         this.limite = limite;
         this.usuarioID = usuario;
+    }
+
+    public Tarjeta(int numero, Double limite, Long usuarioID, Double saldoAdeudado) {
+        this.numero = numero;
+        this.limite = limite;
+        this.usuarioID = usuarioID;
+        this.saldoAdeudado = saldoAdeudado;
     }
 
     public Long getId() {
@@ -45,13 +52,18 @@ public class Tarjeta {
         this.usuarioID = usuarioID;
     }
 
+    public Double getSaldoAdeudado() {
+        return saldoAdeudado;
+    }
+
+    public void setSaldoAdeudado(Double saldoAdeudado) {
+        this.saldoAdeudado = saldoAdeudado;
+    }
+
     @Override
     public String toString() {
-        return "Tarjeta{" +
-                "id=" + id +
-                ", numero=" + numero +
+        return "n°=" + numero +
                 ", limite=" + limite +
-                ", usuarioID=" + usuarioID +
-                '}';
+                ", deuda:" + saldoAdeudado;
     }
 }

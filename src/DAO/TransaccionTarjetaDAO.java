@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransaccionTarjetaDAO implements DAO<TransaccionTarjeta, Long> {
-    final String strCreate = "INSERT INTO TRANSACCIONESTARJETA(FECHA,MONTO,TARJETA,DESTINO) VALUES(?,?,?,?)";
-    final String strUpdate = "UPDATE TRANSACCIONESTARJETA SET FECHA=?, MONTO=?, TARJETA=?, DESTINO=? WHERE ID=?";
-    final String strDelete = "DELETE FROM TRANSACCIONESTARJETA WHERE ID=?";
-    final String strReadAll = "SELECT ID, FECHA, MONTO, TARJETA, DESTINO FROM TRANSACCIONESTARJETA";
-    final String strReadOne = "SELECT ID, FECHA, MONTO, TARJETA, DESTINO FROM TRANSACCIONESTARJETA WHERE ID = ?";
+    private final String strCreate = "INSERT INTO TRANSACCIONESTARJETA(FECHA,MONTO,TARJETA,DESTINO) VALUES(?,?,?,?)";
+    private final String strUpdate = "UPDATE TRANSACCIONESTARJETA SET FECHA=?, MONTO=?, TARJETA=?, DESTINO=? WHERE ID=?";
+    private final String strDelete = "DELETE FROM TRANSACCIONESTARJETA WHERE ID=?";
+    private final String strReadAll = "SELECT ID, FECHA, MONTO, TARJETA, DESTINO FROM TRANSACCIONESTARJETA";
+    private final String strReadOne = "SELECT ID, FECHA, MONTO, TARJETA, DESTINO FROM TRANSACCIONESTARJETA WHERE ID = ?";
 
     @Override
     public void create(TransaccionTarjeta a, Connection c) throws DAOException {

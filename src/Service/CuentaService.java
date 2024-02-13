@@ -9,8 +9,8 @@ import java.sql.Connection;
 import java.util.List;
 
 public class CuentaService implements Service<Cuenta> {
-    Connection conn;
-    CuentaDAO cuentaDAO;
+    private Connection conn;
+    private CuentaDAO cuentaDAO;
 
     public CuentaService() {
         this.cuentaDAO = new CuentaDAO();
@@ -62,14 +62,25 @@ public class CuentaService implements Service<Cuenta> {
             throw new ServiceException(e.getMessage());
         }
     }
-
-    public static void main(String[] args) throws ServiceException {
-        CuentaService cuentaService = new CuentaService();
-        Cuenta cuenta = new Cuenta("M4l",1204D,1,10L);
-        cuentaService.create(cuenta);
-        List<Cuenta> cuentas = cuentaService.readAll();
-        for(Cuenta a: cuentas){
-            System.out.println(a.toString());
+    public List<Cuenta> readAllForUser(Long id) throws ServiceException {
+        try {
+            return cuentaDAO.readAllForUser(id,conn);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+    public Cuenta readOneForAlias(String alias) throws ServiceException {
+        try {
+            return cuentaDAO.readOneForAlias(alias,conn);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+    public Cuenta readOneForCbu(int cbu) throws ServiceException {
+        try {
+            return cuentaDAO.readOneForCBU(cbu,conn);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 }

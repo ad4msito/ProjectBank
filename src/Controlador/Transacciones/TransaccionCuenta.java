@@ -8,15 +8,27 @@ import java.sql.Date;
 public class TransaccionCuenta extends Transaccion {
     private Long cuentaOrigen;
     private Long cuentaDestino;
-    public TransaccionCuenta( Date fecha, Double monto, Long origen, Long destino){
-        super(fecha,monto);
+    public TransaccionCuenta(Double monto, Long origen, Long destino){
+        super(monto);
         this.cuentaOrigen = origen;
         this.cuentaDestino = destino;
         super.tipoTransaccion = 1;
     }
 
+    public TransaccionCuenta(Long cuentaOrigen, Long cuentaDestino) {
+        this.cuentaOrigen = cuentaOrigen;
+        this.cuentaDestino = cuentaDestino;
+    }
+
+    public TransaccionCuenta(Date fecha, Double monto, Long cuentaOrigen, Long cuentaDestino) {
+        super(fecha, monto);
+        this.cuentaOrigen = cuentaOrigen;
+        this.cuentaDestino = cuentaDestino;
+    }
+
     public TransaccionCuenta() {
     }
+
 
     public Long getCuentaOrigen() {
         return cuentaOrigen;

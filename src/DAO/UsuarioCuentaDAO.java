@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 
 public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
-    final String strCreate = "INSERT INTO USUARIOS (NOMBRE, EMAIL, PASSWORD) VALUES (?, ?, ?)";
-    final String strUpdate = "UPDATE USUARIOS SET NOMBRE= ?, EMAIL = ?, PASSWORD = ? WHERE ID = ?";
-    final String strDelete = "DELETE FROM Usuarios WHERE id = ?";
-    final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS";
-    final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE ID = ?";
-    final String strReadbyEmail = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE EMAIL = ?";
+    private final String strCreate = "INSERT INTO USUARIOS (NOMBRE, EMAIL, PASSWORD, ESADMIN) VALUES (?, ?, ?, ?)";
+    private final String strUpdate = "UPDATE USUARIOS SET NOMBRE= ?, EMAIL = ?, PASSWORD = ?, ESADMIN=? WHERE ID = ?";
+    private final String strDelete = "DELETE FROM Usuarios WHERE id = ?";
+    private final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS";
+    private final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE ID = ?";
+    private final String strReadbyEmail = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE EMAIL = ?";
 
 
     @Override
@@ -29,6 +29,7 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
         String nombre = a.getNombre();
         String email = a.getEmail();
         String pass = a.getPassword();
+        boolean esAdmin = a.getEsAdmin();
         PreparedStatement ps = null;
         try {
             conn.setAutoCommit(false);
@@ -36,6 +37,7 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
             ps.setString(1, nombre);
             ps.setString(2, email);
             ps.setString(3, pass);
+            ps.setBoolean(4, esAdmin);
             ps.executeUpdate();
             conn.commit();
             ResultSet rs = ps.getGeneratedKeys();
@@ -69,6 +71,7 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
         String nombre = a.getNombre();
         String email = a.getEmail();
         String pass = a.getPassword();
+        Boolean esAdmin = a.getEsAdmin();
         Long id = a.getId();
         PreparedStatement ps = null;
         try {
@@ -77,7 +80,8 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
             ps.setString(1, nombre);
             ps.setString(2, email);
             ps.setString(3, pass);
-            ps.setLong(4, id);
+            ps.setBoolean(4,esAdmin);
+            ps.setLong(5, id);
             ps.executeUpdate();
             conn.commit();
         } catch (SQLException e1) {

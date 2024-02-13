@@ -17,6 +17,10 @@ public abstract class Transaccion {
         this.monto = monto;
     }
 
+    public Transaccion(Double monto) {
+        this.monto = monto;
+    }
+
     public Long getId() {
         return id;
     }

@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
-    final String strCreate = "INSERT INTO TRANSACCIONESCUENTA(FECHA,MONTO,CUENTA,DESTINO) VALUES (?,?,?,?)";
-    final String strUpdate = "UPDATE TRANSACCIONESCUENTA SET FECHA=?, MONTO=?, CUENTA=?, DESTINO=? WHERE ID = ?";
-    final String strDelete = "DELETE FROM TRANSACCIONESCUENTA WHERE ID = ?";
-    final String strReadAll = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA";
-    final String strReadOne = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA WHERE ID = ?";
+    private final String strCreate = "INSERT INTO TRANSACCIONESCUENTA(MONTO,CUENTA,DESTINO) VALUES (?,?,?)";
+    private final String strUpdate = "UPDATE TRANSACCIONESCUENTA SET FECHA=?, MONTO=?, CUENTA=?, DESTINO=? WHERE ID = ?";
+    private final String strDelete = "DELETE FROM TRANSACCIONESCUENTA WHERE ID = ?";
+    private final String strReadAll = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA";
+    private final String strReadOne = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA WHERE ID = ?";
     @Override
     public void create(TransaccionCuenta a, Connection c) throws DAOException {
         Date fecha = a.getFecha();
@@ -28,10 +28,9 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
         try {
             c.setAutoCommit(false);
             ps = c.prepareStatement(strCreate);
-            ps.setDate(1,fecha);
-            ps.setDouble(2,monto);
-            ps.setLong(3,cuenta);
-            ps.setLong(4,destino);
+            ps.setDouble(1,monto);
+            ps.setLong(2,cuenta);
+            ps.setLong(3,destino);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1) {
@@ -126,7 +125,31 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
         }
         return transacciones;
     }
-
+    public List<TransaccionCuenta> readAllForUser(Long id, Connection c) throws DAOException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<TransaccionCuenta> transacciones = new ArrayList<>();
+        try{
+            c.setAutoCommit(false);
+            ps = c.prepareStatement("SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA WHERE CUENTA = ?");
+            ps.setLong(1,id);
+            rs = ps.executeQuery();
+            c.commit();
+            while(rs.next()){
+                transacciones.add(convertir(rs));
+            }
+        } catch (SQLException e1){
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2){
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return transacciones;
+    }
     @Override
     public TransaccionCuenta readOne(Long id, Connection c) throws DAOException {
         PreparedStatement ps = null;

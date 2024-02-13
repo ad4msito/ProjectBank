@@ -1,22 +1,47 @@
 package Service;
 
+import Controlador.Cuenta;
 import Controlador.Transacciones.TransaccionCuenta;
+import DAO.CuentaDAO;
 import DAO.TransaccionCuentaDAO;
 import Exceptions.DAOException;
 import Exceptions.ServiceException;
 import manager.DBManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransaccionCuentaService implements Service<TransaccionCuenta> {
 
     Connection conn;
     TransaccionCuentaDAO transaccionCuentaDAO;
+    TransaccionCuenta transaccionCuenta;
+    CuentaService cuentaService;
+    CuentaDAO cuentaDAO;
 
     public TransaccionCuentaService() {
         this.conn = DBManager.connect();
+        this.cuentaDAO = new CuentaDAO();
         this.transaccionCuentaDAO = new TransaccionCuentaDAO();
+        this.cuentaService = new CuentaService();
+    }
+    public void realizarTransaccion(Cuenta o, Cuenta d, Double monto) throws ServiceException {
+        try {
+            if(o.getSaldo()>monto){
+                o.setSaldo(o.getSaldo()-monto);
+                cuentaDAO.update(o,conn);
+
+                d.setSaldo(d.getSaldo()+monto);
+                cuentaDAO.update(d,conn);
+                 transaccionCuenta = new TransaccionCuenta(monto, o.getId(),d.getId());
+                transaccionCuentaDAO.create(transaccionCuenta,conn);
+            } else {
+                throw new ServiceException("No hay saldo suficiente para realizar la operacion.");
+            }
+        } catch (DAOException e1) {
+            throw new ServiceException(e1.getMessage());
+        }
     }
 
     @Override
@@ -24,7 +49,7 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
         try {
             transaccionCuentaDAO.create(t,conn);
         } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException("Error al crear una transaccion.");
         }
     }
 
@@ -33,7 +58,7 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
         try {
             transaccionCuentaDAO.update(t,conn);
         } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException("Error al editar la transaccion");
         }
     }
 
@@ -63,4 +88,25 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
             throw new ServiceException(e.getMessage());
         }
     }
+    public List<TransaccionCuenta> readForCuentaOrigen(Long id) throws ServiceException {
+        try {
+            return transaccionCuentaDAO.readAllForUser(id,conn);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+    public List<TransaccionCuenta> readAllForUser(Long usuarioID) throws ServiceException {
+        List<TransaccionCuenta> movimientos = new ArrayList<>();
+        List<Cuenta> cuentasUsuario = cuentaService.readAllForUser(usuarioID);
+        for (Cuenta c : cuentasUsuario) {
+            try {
+                List<TransaccionCuenta> transaccionCuentas = transaccionCuentaDAO.readAllForUser(c.getId(), conn);
+                movimientos.addAll(transaccionCuentas);
+            } catch (DAOException e) {
+                throw new ServiceException(e.getMessage());
+            }
+        }
+        return movimientos;
+    }
+
 }

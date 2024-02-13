@@ -62,4 +62,11 @@ public class TarjetaService implements Service<Tarjeta> {
             throw new ServiceException(e.getMessage());
         }
     }
+    public List<Tarjeta> readOneForUser(Long id) throws ServiceException{
+        try {
+            return tarjetaDAO.readOneForUser(id,conn);
+        } catch (DAOException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
 }

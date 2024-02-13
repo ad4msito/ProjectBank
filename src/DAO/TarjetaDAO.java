@@ -13,17 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TarjetaDAO implements DAO<Tarjeta,Long> {
-    final String strCreate = "INSERT INTO TARJETAS(NUMERO,LIMITE,USUARIO) VALUES (?,?,?)";
-    final String strUpdate = "UPDATE TARJETAS SET NUMERO=?, LIMITE=?, USUARIO=? WHERE ID = ?";
-    final String strDelete = "DELETE FROM TARJETAS WHERE ID = ?";
-    final String strReadAll = "SELECT ID, NUMERO, LIMITE, USUARIO FROM TARJETAS";
-    final String strReadOne = "SELECT ID, NUMERO, LIMITE, USUARIO FROM TARJETAS WHERE ID = ?";
+    private final String strCreate = "INSERT INTO TARJETAS(NUMERO,LIMITE,USUARIO, SALDOADEUDADO) VALUES (?,?,?,?)";
+    private final String strUpdate = "UPDATE TARJETAS SET NUMERO=?, LIMITE=?, USUARIO=?,SALDOADEUDADO = ? WHERE ID = ?";
+    private final String strDelete = "DELETE FROM TARJETAS WHERE ID = ?";
+    private final String strReadAll = "SELECT ID, NUMERO, LIMITE, USUARIO, SALDOADEUDADO FROM TARJETAS";
+    private final String strReadOne = "SELECT ID, NUMERO, LIMITE, USUARIO, SALDOADEUDADO FROM TARJETAS WHERE ID = ?";
 
     @Override
     public void create(Tarjeta a, Connection c) throws DAOException {
         int num = a.getNumero();
         Double limite = a.getLimite();
         Long usuario = a.getUsuarioID();
+        Double deuda = a.getSaldoAdeudado();
         PreparedStatement ps = null;
         try {
             c.setAutoCommit(false);
@@ -31,6 +32,7 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
             ps.setInt(1, num);
             ps.setDouble(2, limite);
             ps.setLong(3, usuario);
+            ps.setDouble(4,deuda);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1) {
@@ -56,6 +58,7 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
         int num = a.getNumero();
         Double limite = a.getLimite();
         Long usuario = a.getUsuarioID();
+        Double deuda = a.getSaldoAdeudado();
         Long id = a.getId();
         PreparedStatement ps = null;
         try {
@@ -64,7 +67,8 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
             ps.setInt(1, num);
             ps.setDouble(2, limite);
             ps.setLong(3, usuario);
-            ps.setLong(4, id);
+            ps.setDouble(4,deuda);
+            ps.setLong(5, id);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1) {
@@ -95,7 +99,8 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
         int numero = rs.getInt("NUMERO");
         Double limite = rs.getDouble("LIMITE");
         Long usuario = rs.getLong("USUARIO");
-        Tarjeta tarjeta = new Tarjeta(numero, limite, usuario);
+        Double deuda = rs.getDouble("SALDOADEUDADO");
+        Tarjeta tarjeta = new Tarjeta(numero, limite, usuario,deuda);
         tarjeta.setId(id);
         return tarjeta;
     }
@@ -151,5 +156,30 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
             }
             return tarjeta;
         }
+    }
+    public List<Tarjeta> readOneForUser(Long id, Connection c) throws DAOException {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Tarjeta> tarjetas = new ArrayList<>();
+        try {
+            c.setAutoCommit(false);
+            ps = c.prepareStatement("SELECT ID, NUMERO, LIMITE, USUARIO, SALDOADEUDADO FROM TARJETAS WHERE USUARIO = ? ");
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            c.commit();
+            while (rs.next()) {
+                tarjetas.add(convertir(rs));
+            }
+        } catch (SQLException e1) {
+            throw new DAOException(e1.getMessage());
+        } finally {
+            try {
+                ps.close();
+                rs.close();
+            } catch (SQLException e2) {
+                throw new DAOException(e2.getMessage());
+            }
+        }
+        return tarjetas;
     }
 }

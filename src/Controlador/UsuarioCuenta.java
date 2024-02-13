@@ -16,7 +16,12 @@ public class UsuarioCuenta {
         this.password = password;
     }
 
-
+    public UsuarioCuenta(String nombre, String email, String password, Boolean esAdmin) {
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
+        this.esAdmin = esAdmin;
+    }
 
     public Long getId() {
         return id;

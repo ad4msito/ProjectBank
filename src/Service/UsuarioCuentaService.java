@@ -64,8 +64,10 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
         }
     }
     public UsuarioCuenta readEmail(String email)throws ServiceException{
-            try {
-                return usuarioCuentaDAO.readEmail(email, conn);
+        UsuarioCuenta usuarioCuenta;
+        try {
+            usuarioCuenta = usuarioCuentaDAO.readEmail(email, conn);
+            return usuarioCuenta;
             } catch (DAOException e) {
                 throw new ServiceException(e.getMessage());
             }
@@ -87,13 +89,11 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
         try {
             UsuarioCuenta user = usuarioCuentaDAO.readEmail(mail,conn);
             if (user != null) {
-                if (user.getPassword().equals((pass))) {
                     if(user.getEsAdmin()){
                         return true;
                     }
                 }
-            }
-        } catch (DAOException e){
+            } catch (DAOException e){
             throw new ServiceException(e.getMessage());
         }
         return false;
