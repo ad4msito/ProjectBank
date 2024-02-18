@@ -62,8 +62,12 @@ public class Tarjeta {
 
     @Override
     public String toString() {
-        return "n°=" + numero +
+        return "Tarjeta{" +
+                "id=" + id +
+                ", numero=" + numero +
                 ", limite=" + limite +
-                ", deuda:" + saldoAdeudado;
+                ", usuarioID=" + usuarioID +
+                ", saldoAdeudado=" + saldoAdeudado +
+                '}';
     }
 }

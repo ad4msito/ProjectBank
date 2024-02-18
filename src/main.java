@@ -1,7 +1,8 @@
-import GUI.FirstPage;
+
+import GUI.VentanaUsers;
 
 public class main {
     public static void main(String[] args) {
-        new FirstPage();
+        new VentanaUsers();
     }
 }

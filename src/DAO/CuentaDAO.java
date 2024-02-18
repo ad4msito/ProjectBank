@@ -36,7 +36,7 @@ public class CuentaDAO implements DAO<Cuenta, Long> {
             ps.setDouble(2, saldo);
             ps.setInt(3, tipo);
             ps.setLong(4, usuarioid);
-            ps.setInt(5,cbu);
+            ps.setInt(5, cbu);
             ps.executeUpdate();
             conn.commit();
         } catch (SQLException e1) {
@@ -75,7 +75,7 @@ public class CuentaDAO implements DAO<Cuenta, Long> {
             ps.setDouble(2, saldo);
             ps.setInt(3, tipo);
             ps.setLong(4, usuario);
-            ps.setInt(5,cbu);
+            ps.setInt(5, cbu);
             ps.setLong(6, id);
             ps.executeUpdate();
             conn.commit();
@@ -139,30 +139,6 @@ public class CuentaDAO implements DAO<Cuenta, Long> {
         }
         return cuentas;
     }
-    public List<Cuenta> readAllForUser(Long idUser, Connection conn) throws DAOException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        List<Cuenta> cuentas = new ArrayList<>();
-        try {
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement("SELECT * FROM CUENTAS WHERE USUARIOID = ?");
-            ps.setLong(1, idUser);
-            rs = ps.executeQuery();
-            conn.commit();
-            while (rs.next()) {
-                cuentas.add(convertir(rs));
-            }
-        } catch (SQLException e1) {
-            throw new DAOException(e1.getMessage());
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e2) {
-                throw new DAOException(e2.getMessage());
-            }
-        }
-        return cuentas;
-    }
 
     @Override
     public Cuenta readOne(Long id, Connection conn) throws DAOException {
@@ -190,54 +166,5 @@ public class CuentaDAO implements DAO<Cuenta, Long> {
         }
         return cuenta;
     }
-    public Cuenta readOneForAlias(String alias, Connection conn) throws DAOException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Cuenta cuenta = null;
-        try {
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement("SELECT ID, ALIAS, SALDO, TIPOCUENTA, USUARIOID, CBU FROM CUENTAS WHERE ALIAS = ?");
-            ps.setString(1, alias);
-            rs = ps.executeQuery();
-            conn.commit();
-            if (rs.next()) {
-                cuenta = convertir(rs);
-            }
-        } catch (SQLException e1) {
-            throw new DAOException(e1.getMessage());
-        } finally {
-            try {
-                ps.close();
-                rs.close();
-            } catch (SQLException e2) {
-                throw new DAOException(e2.getMessage());
-            }
-        }
-        return cuenta;
-    }
-    public Cuenta readOneForCBU(int cbu, Connection conn) throws DAOException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Cuenta cuenta = null;
-        try {
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement("SELECT ID, ALIAS, SALDO, TIPOCUENTA, USUARIOID, CBU FROM CUENTAS WHERE CBU = ?");
-            ps.setInt(1, cbu);
-            rs = ps.executeQuery();
-            conn.commit();
-            if (rs.next()) {
-                cuenta = convertir(rs);
-            }
-        } catch (SQLException e1) {
-            throw new DAOException(e1.getMessage());
-        } finally {
-            try {
-                ps.close();
-                rs.close();
-            } catch (SQLException e2) {
-                throw new DAOException(e2.getMessage());
-            }
-        }
-        return cuenta;
-    }
+
 }

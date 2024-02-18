@@ -26,16 +26,17 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
         this.transaccionCuentaDAO = new TransaccionCuentaDAO();
         this.cuentaService = new CuentaService();
     }
+
     public void realizarTransaccion(Cuenta o, Cuenta d, Double monto) throws ServiceException {
         try {
-            if(o.getSaldo()>monto){
-                o.setSaldo(o.getSaldo()-monto);
-                cuentaDAO.update(o,conn);
+            if (o.getSaldo() > monto) {
+                o.setSaldo(o.getSaldo() - monto);
+                cuentaDAO.update(o, conn);
 
-                d.setSaldo(d.getSaldo()+monto);
-                cuentaDAO.update(d,conn);
-                 transaccionCuenta = new TransaccionCuenta(monto, o.getId(),d.getId());
-                transaccionCuentaDAO.create(transaccionCuenta,conn);
+                d.setSaldo(d.getSaldo() + monto);
+                cuentaDAO.update(d, conn);
+                transaccionCuenta = new TransaccionCuenta(monto, o.getId(), d.getId());
+                transaccionCuentaDAO.create(transaccionCuenta, conn);
             } else {
                 throw new ServiceException("No hay saldo suficiente para realizar la operacion.");
             }
@@ -47,7 +48,7 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
     @Override
     public void create(TransaccionCuenta t) throws ServiceException {
         try {
-            transaccionCuentaDAO.create(t,conn);
+            transaccionCuentaDAO.create(t, conn);
         } catch (DAOException e) {
             throw new ServiceException("Error al crear una transaccion.");
         }
@@ -56,7 +57,7 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
     @Override
     public void update(TransaccionCuenta t) throws ServiceException {
         try {
-            transaccionCuentaDAO.update(t,conn);
+            transaccionCuentaDAO.update(t, conn);
         } catch (DAOException e) {
             throw new ServiceException("Error al editar la transaccion");
         }
@@ -65,7 +66,7 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
     @Override
     public void delete(Long id) throws ServiceException {
         try {
-            transaccionCuentaDAO.delete(id,conn);
+            transaccionCuentaDAO.delete(id, conn);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -83,30 +84,16 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
     @Override
     public TransaccionCuenta readOne(Long id) throws ServiceException {
         try {
-            return transaccionCuentaDAO.readOne(id,conn);
+            return transaccionCuentaDAO.readOne(id, conn);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
-    }
-    public List<TransaccionCuenta> readForCuentaOrigen(Long id) throws ServiceException {
-        try {
-            return transaccionCuentaDAO.readAllForUser(id,conn);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
-        }
-    }
-    public List<TransaccionCuenta> readAllForUser(Long usuarioID) throws ServiceException {
-        List<TransaccionCuenta> movimientos = new ArrayList<>();
-        List<Cuenta> cuentasUsuario = cuentaService.readAllForUser(usuarioID);
-        for (Cuenta c : cuentasUsuario) {
-            try {
-                List<TransaccionCuenta> transaccionCuentas = transaccionCuentaDAO.readAllForUser(c.getId(), conn);
-                movimientos.addAll(transaccionCuentas);
-            } catch (DAOException e) {
-                throw new ServiceException(e.getMessage());
-            }
-        }
-        return movimientos;
     }
 
+    public void realizarTransaccion(Cuenta cuentaEmisora, Cuenta cuentaReceptora, double monto) throws ServiceException{
+        cuentaEmisora.setSaldo(cuentaEmisora.getSaldo() - monto);
+        cuentaService.update(cuentaEmisora);
+        cuentaReceptora.setSaldo(cuentaReceptora.getSaldo() + monto);
+        cuentaService.update(cuentaReceptora);
+    }
 }

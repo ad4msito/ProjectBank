@@ -7,7 +7,9 @@ import Exceptions.ServiceException;
 import manager.DBManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TarjetaService implements Service<Tarjeta> {
     Connection conn;
@@ -62,11 +64,14 @@ public class TarjetaService implements Service<Tarjeta> {
             throw new ServiceException(e.getMessage());
         }
     }
-    public List<Tarjeta> readOneForUser(Long id) throws ServiceException{
-        try {
-            return tarjetaDAO.readOneForUser(id,conn);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+    public List<Tarjeta> filtrarPorUsuario(List<Tarjeta> t, Long id){
+        List<Tarjeta> tarjetasFiltradas = new ArrayList<>();
+        for(Tarjeta tarjeta: t){
+            if(Objects.equals(tarjeta.getUsuarioID(), id)){
+                tarjetasFiltradas.add(tarjeta);
+            }
         }
+        return tarjetasFiltradas;
     }
+
 }

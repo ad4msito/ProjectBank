@@ -6,7 +6,9 @@ import Exceptions.DAOException;
 import Exceptions.ServiceException;
 import manager.DBManager;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CuentaService implements Service<Cuenta> {
     private Connection conn;
@@ -62,25 +64,40 @@ public class CuentaService implements Service<Cuenta> {
             throw new ServiceException(e.getMessage());
         }
     }
-    public List<Cuenta> readAllForUser(Long id) throws ServiceException {
-        try {
-            return cuentaDAO.readAllForUser(id,conn);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+    public List<Cuenta> filtrarPorUsuario(List<Cuenta> cuentas, Long id){
+        List<Cuenta> cuentasFiltradas = new ArrayList<>();
+        for(Cuenta cuenta : cuentas){
+            if (Objects.equals(cuenta.getUsuarioCuenta(), id)){
+                cuentasFiltradas.add(cuenta);
+            }
         }
+        return cuentasFiltradas;
     }
-    public Cuenta readOneForAlias(String alias) throws ServiceException {
-        try {
-            return cuentaDAO.readOneForAlias(alias,conn);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
+    public Cuenta encontrarCuenta(List<Cuenta> cuentas, String aliasOrCbu, int isCbu){
+        Cuenta cuentaEncontrada = null;
+        switch (isCbu){
+            case 1:
+                try {
+                    for (Cuenta cuenta : cuentas) {
+                        int cbu = Integer.parseInt(aliasOrCbu);
+                        if (cuenta.getCbu() == cbu) {
+                            cuentaEncontrada = cuenta;
+                        }
+                    }
+                }catch (RuntimeException e1) {
+                    throw new RuntimeException(e1.getMessage() + "Error al encontrar el CBU.");
+                }
+            case 2:
+                try {
+                    for (Cuenta cuenta : cuentas) {
+                        if (Objects.equals(cuenta.getAlias(), aliasOrCbu)) {
+                            cuentaEncontrada = cuenta;
+                        }
+                    }
+                } catch (RuntimeException e1){
+                    throw new RuntimeException(e1.getMessage() + "Error al encontrar el alias.");
+                }
         }
-    }
-    public Cuenta readOneForCbu(int cbu) throws ServiceException {
-        try {
-            return cuentaDAO.readOneForCBU(cbu,conn);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
-        }
+        return cuentaEncontrada;
     }
 }

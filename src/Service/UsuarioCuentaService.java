@@ -8,6 +8,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import manager.DBManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioCuentaService implements Service<UsuarioCuenta>{
@@ -63,40 +64,20 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
             throw new ServiceException(e.getMessage());
         }
     }
-    public UsuarioCuenta readEmail(String email)throws ServiceException{
-        UsuarioCuenta usuarioCuenta;
+    public UsuarioCuenta singUp(String u, String p) throws ServiceException {
+        UsuarioCuenta usuarioEncontrado = null;
         try {
-            usuarioCuenta = usuarioCuentaDAO.readEmail(email, conn);
-            return usuarioCuenta;
-            } catch (DAOException e) {
-                throw new ServiceException(e.getMessage());
-            }
-    }
-    public Boolean verificarCredenciales(String u, String pass) throws ServiceException {
-        try {
-            UsuarioCuenta user = usuarioCuentaDAO.readEmail(u,conn);
-            if(user!=null) {
-                if(user.getPassword().equals(pass)){
-                    return true;
+            List<UsuarioCuenta> usuarios = usuarioCuentaDAO.readAll(conn);
+            for (UsuarioCuenta user : usuarios) {
+                if (user.getEmail().equals(u) && user.getPassword().equals(p)) {
+                    usuarioEncontrado = user;
+                    System.out.println(usuarioEncontrado.toString());
                 }
             }
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
-        return false;
-    }
-    public Boolean verificarEsAdmin(String mail, String pass) throws ServiceException {
-        try {
-            UsuarioCuenta user = usuarioCuentaDAO.readEmail(mail,conn);
-            if (user != null) {
-                    if(user.getEsAdmin()){
-                        return true;
-                    }
-                }
-            } catch (DAOException e){
-            throw new ServiceException(e.getMessage());
-        }
-        return false;
+        return usuarioEncontrado;
     }
 
 }

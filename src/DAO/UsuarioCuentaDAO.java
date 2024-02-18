@@ -21,8 +21,6 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
     private final String strDelete = "DELETE FROM Usuarios WHERE id = ?";
     private final String strReadAll = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS";
     private final String strReadOne = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE ID = ?";
-    private final String strReadbyEmail = "SELECT ID, NOMBRE, EMAIL, PASSWORD, ESADMIN FROM USUARIOS WHERE EMAIL = ?";
-
 
     @Override
     public void create(UsuarioCuenta a, Connection conn) throws DAOException {
@@ -159,29 +157,6 @@ public  class UsuarioCuentaDAO implements DAO<UsuarioCuenta,Long> {
             }
         } catch (SQLException e1) {
             throw new DAOException(e1.getMessage());
-        } finally {
-            try {
-                ps.close();
-                rs.close();
-            } catch (SQLException e2){
-                throw new DAOException(e2.getMessage());
-            }
-        }
-        return usuario;
-    }
-    public UsuarioCuenta readEmail(String email, Connection conn) throws DAOException{
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        UsuarioCuenta usuario = null;
-        try {
-            ps = conn.prepareStatement(strReadbyEmail);
-            ps.setString(1, email);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                usuario = convertir(rs);
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
         } finally {
             try {
                 ps.close();

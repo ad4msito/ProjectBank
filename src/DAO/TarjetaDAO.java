@@ -157,29 +157,4 @@ public class TarjetaDAO implements DAO<Tarjeta,Long> {
             return tarjeta;
         }
     }
-    public List<Tarjeta> readOneForUser(Long id, Connection c) throws DAOException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        List<Tarjeta> tarjetas = new ArrayList<>();
-        try {
-            c.setAutoCommit(false);
-            ps = c.prepareStatement("SELECT ID, NUMERO, LIMITE, USUARIO, SALDOADEUDADO FROM TARJETAS WHERE USUARIO = ? ");
-            ps.setLong(1, id);
-            rs = ps.executeQuery();
-            c.commit();
-            while (rs.next()) {
-                tarjetas.add(convertir(rs));
-            }
-        } catch (SQLException e1) {
-            throw new DAOException(e1.getMessage());
-        } finally {
-            try {
-                ps.close();
-                rs.close();
-            } catch (SQLException e2) {
-                throw new DAOException(e2.getMessage());
-            }
-        }
-        return tarjetas;
-    }
 }

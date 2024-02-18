@@ -84,11 +84,16 @@ public class Cuenta {
             this.tasaInteres = tasaInteres;
     }
 
-
     @Override
     public String toString() {
-        return "alias='" + alias + '\'' +
+        return "Cuenta{" +
+                "id=" + id +
+                ", alias='" + alias + '\'' +
+                ", saldo=" + saldo +
+                ", tipoCuenta=" + tipoCuenta +
+                ", usuarioCuenta=" + usuarioCuenta +
+                ", tasaInteres=" + tasaInteres +
                 ", cbu=" + cbu +
-                ", Saldo" + saldo;
+                '}';
     }
 }
