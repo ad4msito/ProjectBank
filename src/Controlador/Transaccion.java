@@ -11,7 +11,12 @@ public abstract class Transaccion {
     public Transaccion() {
     }
 
-    public Transaccion( Date fecha, Double monto) {
+    public Transaccion(Long id, Double monto) {
+        this.id = id;
+        this.monto = monto;
+    }
+
+    public Transaccion(Date fecha, Double monto) {
 
         this.fecha = fecha;
         this.monto = monto;

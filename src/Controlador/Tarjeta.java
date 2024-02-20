@@ -20,6 +20,14 @@ public class Tarjeta {
         this.saldoAdeudado = saldoAdeudado;
     }
 
+    public Tarjeta(Long id, int numero, Double limite, Long usuarioID, Double saldoAdeudado) {
+        this.id = id;
+        this.numero = numero;
+        this.limite = limite;
+        this.usuarioID = usuarioID;
+        this.saldoAdeudado = saldoAdeudado;
+    }
+
     public Long getId() {
         return id;
     }

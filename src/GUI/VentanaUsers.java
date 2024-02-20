@@ -9,6 +9,8 @@ import Service.CuentaService;
 import Service.TarjetaService;
 import Service.TransaccionCuentaService;
 import Service.UsuarioCuentaService;
+import jdk.nashorn.internal.scripts.JO;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -17,7 +19,6 @@ import java.awt.event.ItemEvent;
 import java.util.List;
 
 public class VentanaUsers extends JFrame {
-    private VentanaAdmins ventanaAdmins;
     private UsuarioCuentaService usuarioCuentaService;
     private TransaccionCuentaService transaccionCuentaService;
     private CuentaService cuentaService;
@@ -47,11 +48,13 @@ public class VentanaUsers extends JFrame {
     private JButton botonVerCuentas;
     private JButton botonVerTarjetas;
     private JButton botonSalir;
+    private JButton botonResumen;
     //radiobotones
     private JRadioButton radioButton1;
     private JRadioButton radioButton2;
     //combobox
     private JComboBox<String> comboBoxSaldos;
+    private JTextArea areaTexto;
     //diseño
     private int width;
     private int height;
@@ -92,6 +95,7 @@ public class VentanaUsers extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("Banco");
 
         //cardLayout = new CardLayout(); //Layout del panelPrincipal
 
@@ -101,11 +105,11 @@ public class VentanaUsers extends JFrame {
         add(panelPrincipal);
 
         //Ejecutar las vistas
-        VistaLogin();
+        vistaLogin();
         //VistaTransferencia();
         setVisible(true);
     }
-    private void VistaLogin(){
+    private void vistaLogin(){
 
         //diseño vistaLogin:
         //fondo:
@@ -158,11 +162,12 @@ public class VentanaUsers extends JFrame {
         //boton salir:
         botonSalirApliacion = new JButton("Salir");
         botonSalirApliacion.setBounds(30, 700, 100,30);
+        botonSalirApliacion.addActionListener(this::actionPerformance);
         vista2.add(botonSalirApliacion);
 
         panelPrincipal.add(vista2);
     }
-    private void VistaRegistro(){
+    private void vistaRegistro(){
         //diseño:
         vista1 = new JPanel();
         vista1.setPreferredSize(new Dimension(width, height));
@@ -210,7 +215,7 @@ public class VentanaUsers extends JFrame {
         vista1.add(botonSalir);
         panelPrincipal.add(vista1);
     }
-    private void VistaSaldos(int vista, UsuarioCuenta u) {
+    private void vistaSaldos(int vista, UsuarioCuenta u) {
         cuentaSeleccionada = null;
         try {
             cuentasDelUsuario = cuentaService.filtrarPorUsuario(cuentaService.readAll(),u.getId());
@@ -238,6 +243,32 @@ public class VentanaUsers extends JFrame {
             botonVistaTransferir.setFont(fuenteBotones);
             botonVistaTransferir.addActionListener(this::actionPerformance);
             vista2.add(botonVistaTransferir);
+
+            areaTexto = new JTextArea();
+            areaTexto.setBounds(175, 425, 450, 250);
+            areaTexto.setForeground(Color.red);
+            areaTexto.setFont(fuente1);
+            areaTexto.setEnabled(false);
+            vista2.add(areaTexto);
+
+            botonResumen = new JButton("Ver resumen");
+            botonResumen.addActionListener(e -> {
+                areaTexto.setText("");
+                try {
+                    if (cuentaSeleccionada != null) {
+                        for (String transaccion : transaccionCuentaService.realizarResumenOrigen(transaccionCuentaService.readAll(), cuentaSeleccionada.getId())) {
+                            areaTexto.append(transaccion + "\n");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null,"Selecciona una cuenta para ver el resumen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (ServiceException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            botonResumen.setBounds(310,327,180,60);
+            vista2.add(botonResumen);
+
 
             botonVerTarjetas = new JButton("Ver tarjetas");
             botonVerTarjetas.setBounds(560, 327, 180, 60);
@@ -300,7 +331,7 @@ public class VentanaUsers extends JFrame {
         panelPrincipal.add(vista2);
     }
 
-    private void VistaTransferencia(Cuenta cuentaSeleccionada) {
+    private void vistaTransferencia(Cuenta cuentaSeleccionada) {
         //atributos Vista Transferencia:
         vista2 = new JPanel();
         vista2.setPreferredSize(new Dimension(width, height));
@@ -376,16 +407,24 @@ public class VentanaUsers extends JFrame {
         panelPrincipal.add(vista2);
     }
     public void actionPerformance(ActionEvent e) {
+        if (e.getSource() == botonSalirApliacion){
+            dispose();
+        }
         if (e.getSource() == jButtonLogin) {
             String user = jTextField1.getText();
             String pass = jTextField2.getText();
             try {
                 usuarioCuenta = usuarioCuentaService.singUp(user, pass);
                 if (usuarioCuenta != null) {
-                    panelPrincipal.removeAll();
-                    VistaSaldos(1, usuarioCuenta);
-                    panelPrincipal.revalidate();
-                    panelPrincipal.repaint();
+                    if (usuarioCuentaService.esAdmin(usuarioCuenta)) {
+                        dispose();
+                        new VentanaAdmins();
+                    }else {
+                        panelPrincipal.removeAll();
+                        vistaSaldos(1, usuarioCuenta);
+                        panelPrincipal.revalidate();
+                        panelPrincipal.repaint();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -396,7 +435,7 @@ public class VentanaUsers extends JFrame {
         }
         if (e.getSource() == botonVistaRegistro) {
             panelPrincipal.removeAll();
-            VistaRegistro();
+            vistaRegistro();
             panelPrincipal.revalidate();
             panelPrincipal.repaint();
         }
@@ -409,7 +448,7 @@ public class VentanaUsers extends JFrame {
                 usuarioCuentaService.create(u);
                 JOptionPane.showMessageDialog(null, "Cuenta creada con exito", "Felicitaciones", JOptionPane.INFORMATION_MESSAGE);
                 panelPrincipal.removeAll();
-                VistaLogin();
+                vistaLogin();
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
             } catch (ServiceException e1) {
@@ -419,7 +458,7 @@ public class VentanaUsers extends JFrame {
         if (e.getSource() == botonVistaTransferir) {
             if(cuentaSeleccionada!=null) {
                 panelPrincipal.removeAll();
-                VistaTransferencia(cuentaSeleccionada);
+                vistaTransferencia(cuentaSeleccionada);
                 panelPrincipal.revalidate();
                 panelPrincipal.repaint();
             } else {
@@ -428,19 +467,19 @@ public class VentanaUsers extends JFrame {
         }
         if (e.getSource() == botonVerCuentas) {
             panelPrincipal.removeAll();
-            VistaSaldos(1, usuarioCuenta);
+            vistaSaldos(1, usuarioCuenta);
             panelPrincipal.revalidate();
             panelPrincipal.repaint();
         }
         if (e.getSource() == botonVerTarjetas) {
             panelPrincipal.removeAll();
-            VistaSaldos(0, usuarioCuenta);
+            vistaSaldos(0, usuarioCuenta);
             panelPrincipal.revalidate();
             panelPrincipal.repaint();
         }
         if (e.getSource() == botonSalir) {
             panelPrincipal.removeAll();
-            VistaLogin();
+            vistaLogin();
             panelPrincipal.revalidate();
             panelPrincipal.repaint();
         }
@@ -473,16 +512,19 @@ public class VentanaUsers extends JFrame {
                     if (monto>0) {
                         if(cuentaReceptora!=null) {
                             //realizar la transaccion
-                            transaccionCuentaService.realizarTransaccion(cuentaSeleccionada, cuentaReceptora, monto);
-                            JOptionPane.showMessageDialog(null, "Transferencia realizada con exito", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE);
-                            TransaccionCuenta transaccionRealizada = new TransaccionCuenta((double) monto, cuentaSeleccionada.getId(), cuentaReceptora.getId());
-                            transaccionCuentaService.create(transaccionRealizada);
-                            System.out.println(transaccionRealizada);
+                            try {
+                                transaccionCuentaService.realizarTransaccion(cuentaSeleccionada, cuentaReceptora, monto);
+                                JOptionPane.showMessageDialog(null, "Transferencia realizada con exito", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE);
+                                TransaccionCuenta transaccionRealizada = new TransaccionCuenta((double) monto, cuentaSeleccionada.getId(), cuentaReceptora.getId());
+                                transaccionCuentaService.create(transaccionRealizada);
+                                panelPrincipal.removeAll();
+                                vistaSaldos(1, usuarioCuenta);
+                                panelPrincipal.revalidate();
+                                panelPrincipal.repaint();
+                            } catch (RuntimeException e1){
+                                JOptionPane.showMessageDialog(null,"Saldo insuficiente");
+                            }
                             //volver a la vista anterior
-                            panelPrincipal.removeAll();
-                            VistaSaldos(1, usuarioCuenta);
-                            panelPrincipal.revalidate();
-                            panelPrincipal.repaint();
                         } else {
                             JOptionPane.showMessageDialog(null,"Cuenta no encontrada", "Error", JOptionPane.ERROR_MESSAGE);
                         }

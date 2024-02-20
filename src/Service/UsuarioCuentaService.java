@@ -32,7 +32,7 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
     @Override
     public void update(UsuarioCuenta t) throws ServiceException {
         try {
-            usuarioCuentaDAO.create(t,conn);
+            usuarioCuentaDAO.update(t,conn);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -71,7 +71,6 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
             for (UsuarioCuenta user : usuarios) {
                 if (user.getEmail().equals(u) && user.getPassword().equals(p)) {
                     usuarioEncontrado = user;
-                    System.out.println(usuarioEncontrado.toString());
                 }
             }
         } catch (DAOException e) {
@@ -79,5 +78,13 @@ public class UsuarioCuentaService implements Service<UsuarioCuenta>{
         }
         return usuarioEncontrado;
     }
-
+    public boolean esAdmin(UsuarioCuenta u){
+        boolean esAdministrador;
+        if (u.getEsAdmin()){
+            esAdministrador = true;
+        } else {
+            esAdministrador = false;
+        }
+        return esAdministrador;
+    }
 }

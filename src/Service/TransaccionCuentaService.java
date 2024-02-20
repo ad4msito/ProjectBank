@@ -9,8 +9,10 @@ import Exceptions.ServiceException;
 import manager.DBManager;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TransaccionCuentaService implements Service<TransaccionCuenta> {
 
@@ -74,11 +76,15 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
 
     @Override
     public List<TransaccionCuenta> readAll() throws ServiceException {
+        List<TransaccionCuenta> lista= new ArrayList<>();
         try {
-            return transaccionCuentaDAO.readAll(conn);
+            lista = transaccionCuentaDAO.readAll(conn);
+            for (TransaccionCuenta t: lista){
+            }
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
+        return lista;
     }
 
     @Override
@@ -91,9 +97,42 @@ public class TransaccionCuentaService implements Service<TransaccionCuenta> {
     }
 
     public void realizarTransaccion(Cuenta cuentaEmisora, Cuenta cuentaReceptora, double monto) throws ServiceException{
-        cuentaEmisora.setSaldo(cuentaEmisora.getSaldo() - monto);
-        cuentaService.update(cuentaEmisora);
-        cuentaReceptora.setSaldo(cuentaReceptora.getSaldo() + monto);
-        cuentaService.update(cuentaReceptora);
+        if (cuentaEmisora.getSaldo()>monto) {
+            cuentaEmisora.setSaldo(cuentaEmisora.getSaldo() - monto);
+            cuentaService.update(cuentaEmisora);
+            cuentaReceptora.setSaldo(cuentaReceptora.getSaldo() + monto);
+            cuentaService.update(cuentaReceptora);
+        } else {
+            throw new RuntimeException("Saldo insuficiente");
+        }
+    }
+    public ArrayList<String> realizarResumenOrigen(List<TransaccionCuenta> transacciones, Long idUser){
+        ArrayList<String> transaccionesFiltradas = new ArrayList<>();
+        for (int i = transacciones.size() - 1; i >= 0; i--) {
+            TransaccionCuenta transaccion = transacciones.get(i);
+            if(Objects.equals(transaccion.getCuentaOrigen(), idUser)){
+                String item = "Transferencia enviada: " + "$" + transaccion.getMonto() + " Fecha: " + transaccion.getFecha();
+                transaccionesFiltradas.add(item);
+            }
+            if(Objects.equals(transaccion.getCuentaDestino(), idUser)){
+                String item = "Transferencia recibida: " + "$" + transaccion.getMonto() + " Fecha: " + transaccion.getFecha();
+                transaccionesFiltradas.add(item);
+            }
+        }
+        return transaccionesFiltradas;
+    }
+
+    public static void main(String[] args) {
+       TransaccionCuentaService t = new TransaccionCuentaService();
+        try {
+            ArrayList<String> str = t.realizarResumenOrigen(t.readAll(),16L);
+            int n = 1;
+            for (String s: str){
+                System.out.println(n + s);
+                n++;
+            }
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

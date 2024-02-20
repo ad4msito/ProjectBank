@@ -21,6 +21,15 @@ public class Cuenta {
         this.cbu = cbu;
     }
 
+    public Cuenta(Long id, String alias, Double saldo, int tipoCuenta, Long usuarioCuenta, int cbu) {
+        this.id = id;
+        this.alias = alias;
+        this.saldo = saldo;
+        this.tipoCuenta = tipoCuenta;
+        this.usuarioCuenta = usuarioCuenta;
+        this.cbu = cbu;
+    }
+
     public int getCbu() {
         return cbu;
     }

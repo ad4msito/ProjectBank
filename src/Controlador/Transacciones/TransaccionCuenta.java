@@ -15,6 +15,12 @@ public class TransaccionCuenta extends Transaccion {
         super.tipoTransaccion = 1;
     }
 
+    public TransaccionCuenta(Long id, Double monto, Long cuentaOrigen, Long cuentaDestino) {
+        super(id, monto);
+        this.cuentaOrigen = cuentaOrigen;
+        this.cuentaDestino = cuentaDestino;
+    }
+
     public TransaccionCuenta(Long cuentaOrigen, Long cuentaDestino) {
         this.cuentaOrigen = cuentaOrigen;
         this.cuentaDestino = cuentaDestino;
@@ -28,6 +34,8 @@ public class TransaccionCuenta extends Transaccion {
 
     public TransaccionCuenta() {
     }
+
+
 
 
     public Long getCuentaOrigen() {

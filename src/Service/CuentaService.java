@@ -1,6 +1,7 @@
 package Service;
 
 import Controlador.Cuenta;
+import Controlador.Transacciones.TransaccionCuenta;
 import DAO.CuentaDAO;
 import Exceptions.DAOException;
 import Exceptions.ServiceException;
@@ -100,4 +101,5 @@ public class CuentaService implements Service<Cuenta> {
         }
         return cuentaEncontrada;
     }
+
 }

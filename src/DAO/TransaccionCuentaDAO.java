@@ -14,7 +14,7 @@ import java.util.List;
 
 public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
     private final String strCreate = "INSERT INTO TRANSACCIONESCUENTA(MONTO,CUENTA,DESTINO) VALUES (?,?,?)";
-    private final String strUpdate = "UPDATE TRANSACCIONESCUENTA SET FECHA=?, MONTO=?, CUENTA=?, DESTINO=? WHERE ID = ?";
+    private final String strUpdate = "UPDATE TRANSACCIONESCUENTA SET MONTO=?, CUENTA=?, DESTINO=? WHERE ID = ?";
     private final String strDelete = "DELETE FROM TRANSACCIONESCUENTA WHERE ID = ?";
     private final String strReadAll = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA";
     private final String strReadOne = "SELECT ID, FECHA, MONTO, CUENTA, DESTINO FROM TRANSACCIONESCUENTA WHERE ID = ?";
@@ -51,7 +51,6 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
 
     @Override
     public void update(TransaccionCuenta a, Connection c) throws DAOException {
-        Date fecha = a.getFecha();
         Double monto = a.getMonto();
         Long origen = a.getCuentaOrigen();
         Long destino = a.getCuentaDestino();
@@ -60,11 +59,10 @@ public class TransaccionCuentaDAO implements DAO<TransaccionCuenta, Long> {
         try {
             c.setAutoCommit(false);
             ps = c.prepareStatement(strUpdate);
-            ps.setDate(1,fecha);
-            ps.setDouble(2,monto);
-            ps.setLong(3,origen);
-            ps.setLong(4,destino);
-            ps.setLong(5,id);
+            ps.setDouble(1,monto);
+            ps.setLong(2,origen);
+            ps.setLong(3,destino);
+            ps.setLong(4,id);
             ps.executeUpdate();
             c.commit();
         } catch (SQLException e1){
