@@ -25,10 +25,10 @@ Este proyecto de Mini Homebanking fue desarrollado como parte de un proyecto aca
 
 ### Vista de Movimientos
 ![image](https://github.com/user-attachments/assets/3ffa8f46-099b-4a19-8c8f-232ce1a9df48)
-![image](https://github.com/user-attachments/assets/672a5743-9fc6-4068-bd2c-2e28a88b3611)
 
 ### Vista de Tarjetas
 ![image](https://github.com/user-attachments/assets/27c7fe8d-7b3f-4426-925f-5ea4b5deea9d)
+### Vista de Saldo adeudado
 ![image](https://github.com/user-attachments/assets/24e360b0-d4e7-4691-a628-2c92ff1d90d4)
 
 ### Vista de Transferencias
