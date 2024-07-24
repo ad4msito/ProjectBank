@@ -13,3 +13,4 @@ Tecnologías Utilizadas
 -Modelo de Tres Capas: El proyecto sigue una arquitectura de tres capas (presentación, lógica de negocio y acceso a datos).
 -Base de Datos: Utilizamos una base de datos H2 para almacenar la información de los usuarios y las transacciones.
 -Operaciones ABM: Implementamos las operaciones de alta, baja y modificación en Java.
+![image](https://github.com/user-attachments/assets/1af1547c-3f3c-4600-bf17-88d8b5c73481)
